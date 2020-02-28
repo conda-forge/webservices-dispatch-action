@@ -113,7 +113,7 @@ def main():
         if any(l.name == 'rerender' for l in pr.labels):
             with tempfile.TemporaryDirectory() as tmpdir:
                 # clone the head repo
-                repo_url = "https://{}@github.com/{}.git".format(
+                repo_url = "https://%s@github.com/%s.git" % (
                     os.environ['INPUT_GITHUB_TOKEN'],
                     event_data['head']['repo']['full_name'],
                 )
