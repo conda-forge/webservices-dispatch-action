@@ -134,21 +134,22 @@ def main():
                 os.system('cd %s && git status && cd -' % feedstock_dir)
 
                 # remove the label
-                pr.remove_from_labels('rerender')
+                # pr.remove_from_labels('rerender')
+                pr.create_issue_comment('test comment')
 
-                # rerender
-                changed, rerender_error = rerender(git_repo)
-
-                # comment
-                comment_and_push_per_changed(
-                    changed=changed,
-                    rerender_error=rerender_error,
-                    git_repo=git_repo,
-                    pull=pr,
-                    pr_branch=event_data['head']['ref'],
-                    pr_owner=event_data['head']['repo']['owner']['login'],
-                    pr_repo=event_data['head']['repo']['name'],
-                )
+                # # rerender
+                # changed, rerender_error = rerender(git_repo)
+                #
+                # # comment
+                # comment_and_push_per_changed(
+                #     changed=changed,
+                #     rerender_error=rerender_error,
+                #     git_repo=git_repo,
+                #     pull=pr,
+                #     pr_branch=event_data['head']['ref'],
+                #     pr_owner=event_data['head']['repo']['owner']['login'],
+                #     pr_repo=event_data['head']['repo']['name'],
+                # )
 
         else:
             LOGGER.info("the 'rerender' label was not found!")
