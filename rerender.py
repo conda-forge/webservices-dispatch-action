@@ -131,7 +131,7 @@ def main():
                     feedstock_dir,
                     branch=pr_branch,
                 )
-                os.system('pushd %s && git status && popd' % feedstock_dir)
+                os.system('cd %s && git status && cd -' % feedstock_dir)
 
                 # rerender
                 changed, rerender_error = rerender(git_repo)
