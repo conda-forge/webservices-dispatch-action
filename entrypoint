@@ -4,8 +4,8 @@ echo " "
 echo "==================================================================================================="
 echo "==================================================================================================="
 
-git config user.name ${GITHUB_ACTOR}
-git config user.email "github-actions@email.com"
+git config --global user.name ${GITHUB_ACTOR}
+git config --global user.email "github-actions@email.com"
 
 source /opt/conda/etc/profile.d/conda.sh
 
