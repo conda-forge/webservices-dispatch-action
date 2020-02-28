@@ -130,8 +130,15 @@ def main():
                     pr_owner=event_data['head']['repo']['owner'],
                     pr_repo=event_data['head']['repo']['name'],
                 )
+
+                # remove the label
+                pr.remove_from_labels('rerender')
         else:
             LOGGER.info("the 'rerender' label was not found!")
 
     else:
         raise ValueError('GitHub event %s cannot be processed!' % event_name)
+
+
+if __name__ == '__main__':
+    main()
