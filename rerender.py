@@ -113,15 +113,23 @@ def main():
         if any(l.name == 'rerender' for l in pr.labels):
             with tempfile.TemporaryDirectory() as tmpdir:
                 # clone the head repo
-                repo_url = "https://%s@github.com/%s.git" % (
+                pr_branch = event_data['head']['ref']
+                pr_owner = event_data['head']['repo']['owner']['login']
+                pr_repo = event_data['head']['repo']['name']
+                repo_url = "https://%s@github.com/%s/%s.git" % (
                     os.environ['INPUT_GITHUB_TOKEN'],
-                    event_data['head']['repo']['full_name'],
+                    pr_owner,
+                    pr_repo,
                 )
                 feedstock_dir = os.path.join(
                     tmpdir,
                     event_data['head']['repo']['name'],
                 )
-                git_repo = Repo.clone_from(repo_url, feedstock_dir)
+                git_repo = Repo.clone_from(
+                    repo_url,
+                    feedstock_dir,
+                    branch=pr_branch,
+                )
 
                 # rerender
                 changed, rerender_error = rerender(git_repo)
