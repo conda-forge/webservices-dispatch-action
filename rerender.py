@@ -52,7 +52,7 @@ def comment_and_push_per_changed(
     changed, rerender_error, git_repo, pull, pr_branch, pr_owner, pr_repo
 ):
     LOGGER.info(
-        'commenting: branch|owner|repo = %s|%s|%s',
+        'pushing and commenting: branch|owner|repo = %s|%s|%s',
         pr_branch,
         pr_owner,
         pr_repo,
@@ -116,7 +116,8 @@ def main():
                 pr_branch = event_data['head']['ref']
                 pr_owner = event_data['head']['repo']['owner']['login']
                 pr_repo = event_data['head']['repo']['name']
-                repo_url = "https://%s@github.com/%s/%s.git" % (
+                repo_url = "https://%s:%s@github.com/%s/%s.git" % (
+                    os.environ['GITHUB_ACTOR'],
                     os.environ['INPUT_GITHUB_TOKEN'],
                     pr_owner,
                     pr_repo,
