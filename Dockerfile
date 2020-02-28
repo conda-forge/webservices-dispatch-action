@@ -60,7 +60,8 @@ RUN echo "**** install dev packages ****" && \
     chmod 777 "$CONDA_DIR/locks"
 
 COPY entrypoint /opt/docker/bin/entrypoint
-COPY rerender.py ~/rerender.py
+RUN mkdir -p /opt/conda-forge
+COPY rerender.py /opt/conda-forge/rerender.py
 
 ENTRYPOINT ["/opt/conda/bin/tini", "--", "/opt/docker/bin/entrypoint"]
 CMD ["/bin/bash"]
