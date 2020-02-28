@@ -126,7 +126,7 @@ def main():
                     rerender_error=rerender_error,
                     git_repo=git_repo,
                     pull=pr,
-                    pr_branch=event_data['head']['repo']['ref'],
+                    pr_branch=event_data['head']['ref'],
                     pr_owner=event_data['head']['repo']['owner'],
                     pr_repo=event_data['head']['repo']['name'],
                 )

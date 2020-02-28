@@ -37,6 +37,7 @@ RUN echo "**** install dev packages ****" && \
     conda config --add channels conda-forge  && \
     conda config --show-sources  && \
     conda config --set always_yes yes && \
+    conda config --set channel_priority strict && \
     conda update --all && \
     conda install --quiet \
         git \
