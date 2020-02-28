@@ -7,6 +7,6 @@ inputs:
     required: true
 runs:
   using: 'docker'
-  image: 'docker://condaforge/rerender-action:prod'
+  image: 'docker://condaforge/rerender-action:dev'
   args:
     - ${{ inputs.github_token }}
