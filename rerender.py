@@ -133,6 +133,9 @@ def main():
                 )
                 os.system('cd %s && git status && cd -' % feedstock_dir)
 
+                # remove the label
+                pr.remove_from_labels('rerender')
+
                 # rerender
                 changed, rerender_error = rerender(git_repo)
 
@@ -147,8 +150,6 @@ def main():
                     pr_repo=event_data['head']['repo']['name'],
                 )
 
-                # remove the label
-                pr.remove_from_labels('rerender')
         else:
             LOGGER.info("the 'rerender' label was not found!")
 
