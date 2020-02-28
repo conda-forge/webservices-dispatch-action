@@ -8,7 +8,7 @@ source /opt/conda/etc/profile.d/conda.sh
 
 conda activate base
 
-conda update conda-smithy conda-forge-pinning conda-build -y
+conda update conda-smithy conda-forge-pinning conda-build -y --quiet
 
 conda info
 

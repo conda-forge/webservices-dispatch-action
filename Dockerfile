@@ -60,7 +60,9 @@ RUN echo "**** install dev packages ****" && \
     chmod 777 "$CONDA_DIR/locks"
 
 COPY entrypoint /opt/docker/bin/entrypoint
-RUN mkdir -p /opt/conda-forge
+RUN mkdir -p /opt/conda-forge && \
+    git config --global user.email "github-actions@email.com" && \
+    git config --global user.name "GitHub Rerender Action"
 COPY rerender.py /opt/conda-forge/rerender.py
 
 ENTRYPOINT ["/opt/conda/bin/tini", "--", "/opt/docker/bin/entrypoint"]
