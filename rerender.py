@@ -56,7 +56,8 @@ def comment_and_push_per_changed(
     if changed:
         try:
             git_repo.remotes.origin.push()
-        except GitCommandError:
+        except GitCommandError as e:
+            LOGGER.critical(repr(e))
             message = """\
 Hi! This is the friendly automated conda-forge-webservice.
 I tried to rerender for you, but it looks like I wasn't able to push to the {}
