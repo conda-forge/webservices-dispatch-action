@@ -51,7 +51,12 @@ def comment_and_push_per_changed(
     *,
     changed, rerender_error, git_repo, pull, pr_branch, pr_owner, pr_repo
 ):
-    LOGGER.info('commenting')
+    LOGGER.info(
+        'commenting: branch|owner|repo = %s|%s|%s',
+        pr_branch,
+        pr_owner,
+        pr_repo,
+    )
 
     if changed:
         try:
