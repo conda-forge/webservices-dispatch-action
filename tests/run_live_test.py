@@ -22,11 +22,51 @@ Then you can execute this script and it will report the results.
 import os
 import json
 import time
-
+import tempfile
 import requests
+import contextlib
+import subprocess
+
+
+@contextlib.contextmanager
+def pushd(new_dir):
+    previous_dir = os.getcwd()
+    os.chdir(new_dir)
+    try:
+        yield
+    finally:
+        os.chdir(previous_dir)
 
 
 print('making an edit to the head ref...')
+with tempfile.TemporaryDirectory() as tmpdir:
+    with pushd(tmpdir):
+        print("cloning...")
+        os.system(
+            "git clone "
+            "https://github.com/conda-forge/"
+            "cf-autotick-bot-test-package-feedstock.git",
+        )
+
+        with pushd("cf-autotick-bot-test-package-feedstock"):
+            print("checkout branch...")
+            os.system("git checkout rerender-live-test")
+
+            print("removing files...")
+            os.system("git rm .ci_support/*.yaml")
+
+            print("git status...")
+            os.system("git status")
+
+            print("commiting...")
+            os.system(
+                "git commit "
+                "-m "
+                "'remove ci scripts to trigger rerender'"
+            )
+
+            print("push to origin...")
+            os.system("git push")
 
 
 print('sending repo dispatch event to rerender...')
@@ -51,3 +91,26 @@ while tot < 180:
     print("    slept %s seconds out of 180" % tot, flush=True)
 
 print('checking repo for the rerender...')
+with tempfile.TemporaryDirectory() as tmpdir:
+    with pushd(tmpdir):
+        print("cloning...")
+        os.system(
+            "git clone "
+            "https://github.com/conda-forge/"
+            "cf-autotick-bot-test-package-feedstock.git",
+        )
+
+        with pushd("cf-autotick-bot-test-package-feedstock"):
+            print("checkout branch...")
+            os.system("git checkout rerender-live-test")
+
+            print("checking the git history")
+            c = subprocess.run(
+                ["git", "log", "--pretty=oneline", "-n", "1"],
+                capture_output=True,
+            )
+            output = c.stdout.decode('utf-8')
+            print("    last commit:", output.strip())
+            assert "MNT:" in output
+
+print('tests passed!')
