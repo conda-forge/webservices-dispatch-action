@@ -1,4 +1,4 @@
-name: 'rerender-action'
+name: 'webservices-dispatch-action'
 description: 'conda-forge rerender GitHub Action'
 author: conda-forge core (@conda-forge/core)
 inputs:
@@ -7,6 +7,6 @@ inputs:
     required: true
 runs:
   using: 'docker'
-  image: 'docker://condaforge/rerender-action:prod'
+  image: 'docker://condaforge/webservices-dispatch-action:prod'
   args:
     - ${{ inputs.github_token }}
