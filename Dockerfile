@@ -48,6 +48,7 @@ RUN echo "**** install dev packages ****" && \
         pip \
         tini \
         pygithub \
+        requests \
         gitpython && \
     \
     echo "**** cleanup ****" && \
@@ -61,8 +62,12 @@ RUN echo "**** install dev packages ****" && \
     chmod 777 "$CONDA_DIR/locks"
 
 COPY entrypoint /opt/docker/bin/entrypoint
-RUN mkdir -p /opt/conda-forge
-COPY rerender.py /opt/conda-forge/rerender.py
+RUN mkdir -p webservices_dispatch_action
+COPY / webservices_dispatch_action/
+RUN cd webservices_dispatch_action && \
+    source /opt/conda/etc/profile.d/conda.sh && \
+    conda activate base && \
+    pip install -e .
 
 ENTRYPOINT ["/opt/conda/bin/tini", "--", "/opt/docker/bin/entrypoint"]
 CMD ["/bin/bash"]

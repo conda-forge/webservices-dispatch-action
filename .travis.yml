@@ -6,29 +6,55 @@ matrix:
   include:
     - os: linux
       sudo: required
+      env: DO_DOCKER_BUILD=0
       name: tests
+    - os: linux
+      sudo: required
+      env: DO_DOCKER_BUILD=1
+      name: docker
 
 install:
   - |
-    echo "installing miniconda"
-    rm -rf $HOME/miniconda
-    mkdir -p $HOME/download
-    curl -s https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o $HOME/download/miniconda.sh
-    bash $HOME/download/miniconda.sh -b -p $HOME/miniconda
+    if [[ "${DO_DOCKER_BUILD}" == "0" ]]; then
+      echo "installing miniconda"
+      rm -rf $HOME/miniconda
+      mkdir -p $HOME/download
+      curl -s https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o $HOME/download/miniconda.sh
+      bash $HOME/download/miniconda.sh -b -p $HOME/miniconda
 
-    export PATH=$HOME/miniconda/bin:$PATH
+      export PATH=$HOME/miniconda/bin:$PATH
 
-    conda config --set always_yes yes --set changeps1 no
-    conda config --add channels defaults
-    conda config --add channels conda-forge
-    conda update -q conda
-    conda info -a
+      conda config --set always_yes yes --set changeps1 no
+      conda config --add channels defaults
+      conda config --add channels conda-forge
+      conda update -q conda
+      conda info -a
 
-    conda create -q -n test-env \
-        python=3.7 \
-        flake8
+      conda create -q -n test-env \
+          git \
+          python=3.7 \
+          pip \
+          tini \
+          pygithub \
+          gitpython \
+          requests \
+          flake8 \
+          pytest \
+          conda-smithy \
+          conda-forge-pinning \
+          conda-build
 
-    source activate test-env
+      source activate test-env
+
+      pip install --no-deps -e .
+    fi
 
 script:
-  - flake8 rerender.py
+  - |
+    if [[ "${DO_DOCKER_BUILD}" == "0" ]]; then
+      flake8 webservices_dispatch_action
+      pytest -vv webservices_dispatch_action
+      command -v run-webservices-dispatch-action
+    else
+      docker build -t test .
+    fi

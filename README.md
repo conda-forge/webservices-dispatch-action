@@ -1,4 +1,4 @@
-# rerender-action
+# webservices-dispatch-action
 
 a GitHub action to rerender conda-forge feedstocks
 
@@ -12,11 +12,11 @@ on: repository_dispatch
 jobs:
   rerender-action:
     runs-on: ubuntu-latest
-    name: rerender-action
+    name: webservices
     steps:
-      - name: rerender-action
-        id: rerender-action
-        uses: conda-forge/rerender-action@master
+      - name: webservices
+        id: webservices
+        uses: conda-forge/webservices-dispatch-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -31,14 +31,14 @@ correct data
 ## Deployment
 
 The GitHub action always points to the `prod` tag of the
-[condaforge/rerender-action](https://hub.docker.com/repository/docker/condaforge/rerender-action)
+[condaforge/webservices-dispatch-action](https://hub.docker.com/repository/docker/condaforge/webservices-dispatch-action)
 Docker image.
 
  - To redeploy the rerender action, push a new image to the `prod` tag.
 
    ```bash
-   docker build -t condaforge/rerender-action:dev .
-   docker push condaforge/rerender-action:prod
+   docker build -t condaforge/webservices-dispatch-action:prod .
+   docker push condaforge/webservices-dispatch-action:prod
    ```
 
  - To take the rerender action down, delete the tag from the Docker repository.
