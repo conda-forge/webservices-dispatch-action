@@ -7,10 +7,7 @@ a GitHub action to rerender conda-forge feedstocks
 To use this action, add the following YAML file at `.github/workflows/rerender.yml`
 
 ```yaml
-on:
-  pull_request:
-    types:
-      - labeled
+on: repository_dispatch
 
 jobs:
   rerender-action:
@@ -22,6 +19,13 @@ jobs:
         uses: conda-forge/rerender-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+The admin web service will create the appropriate `dispatch` event with the
+correct data
+
+```json
+{"event_type": "rerender", "client_payload": {"pr": 12}}
 ```
 
 ## Deployment

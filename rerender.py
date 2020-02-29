@@ -4,6 +4,8 @@ import logging
 import pprint
 import tempfile
 import subprocess
+import requests
+import json
 
 import urllib3.util.retry
 
@@ -58,6 +60,7 @@ def comment_and_push_per_changed(
         pr_repo,
     )
 
+    message = None
     if changed:
         try:
             git_repo.remotes.origin.push()
@@ -85,7 +88,8 @@ Hi! This is the friendly automated conda-forge-webservice.
 I tried to rerender for you, but it looks like there was nothing to do.
 """
 
-    pull.create_issue_comment(message)
+    if message is not None:
+        pull.create_issue_comment(message)
 
 
 def main():
@@ -102,58 +106,47 @@ def main():
     LOGGER.info('github event: %s', event_name)
     LOGGER.info('github event data:\n%s', pprint.pformat(event_data))
 
-    if event_name in ['pull_request']:
-        event_data = event_data['pull_request']
-        repo_name = event_data['base']['repo']['full_name']
-        pr_num = int(event_data['number'])
+    if event_name in ['repository_dispatch']:
+        pr_num = int(event_data['client_payload']['pr'])
+        repo_name = event_data['repository']['full_name']
 
         gh_repo = gh.get_repo(repo_name)
         pr = gh_repo.get_pull(pr_num)
 
-        if any(l.name == 'rerender' for l in pr.labels):
-            with tempfile.TemporaryDirectory() as tmpdir:
-                # clone the head repo
-                pr_branch = event_data['head']['ref']
-                pr_owner = event_data['head']['repo']['owner']['login']
-                pr_repo = event_data['head']['repo']['name']
-                repo_url = "https://%s:%s@github.com/%s/%s.git" % (
-                    os.environ['GITHUB_ACTOR'],
-                    os.environ['INPUT_GITHUB_TOKEN'],
-                    pr_owner,
-                    pr_repo,
-                )
-                feedstock_dir = os.path.join(
-                    tmpdir,
-                    event_data['head']['repo']['name'],
-                )
-                git_repo = Repo.clone_from(
-                    repo_url,
-                    feedstock_dir,
-                    branch=pr_branch,
-                )
-                os.system('cd %s && git status && cd -' % feedstock_dir)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # clone the head repo
+            pr_branch = pr.head.ref
+            pr_owner = pr.head.repo.owner.login
+            pr_repo = pr.head.repo.name
+            repo_url = "https://%s:%s@github.com/%s/%s.git" % (
+                os.environ['GITHUB_ACTOR'],
+                os.environ['INPUT_GITHUB_TOKEN'],
+                pr_owner,
+                pr_repo,
+            )
+            feedstock_dir = os.path.join(
+                tmpdir,
+                pr_repo,
+            )
+            git_repo = Repo.clone_from(
+                repo_url,
+                feedstock_dir,
+                branch=pr_branch,
+            )
 
-                # remove the label
-                # pr.remove_from_labels('rerender')
-                pr.create_issue_comment('test comment')
+            # rerender
+            changed, rerender_error = rerender(git_repo)
 
-                # # rerender
-                # changed, rerender_error = rerender(git_repo)
-                #
-                # # comment
-                # comment_and_push_per_changed(
-                #     changed=changed,
-                #     rerender_error=rerender_error,
-                #     git_repo=git_repo,
-                #     pull=pr,
-                #     pr_branch=event_data['head']['ref'],
-                #     pr_owner=event_data['head']['repo']['owner']['login'],
-                #     pr_repo=event_data['head']['repo']['name'],
-                # )
-
-        else:
-            LOGGER.info("the 'rerender' label was not found!")
-
+            # comment
+            comment_and_push_per_changed(
+                changed=changed,
+                rerender_error=rerender_error,
+                git_repo=git_repo,
+                pull=pr,
+                pr_branch=pr_branch,
+                pr_owner=pr_owner,
+                pr_repo=pr_repo,
+            )
     else:
         raise ValueError('GitHub event %s cannot be processed!' % event_name)
 
