@@ -10,12 +10,12 @@ To use this action, add the following YAML file at `.github/workflows/rerender.y
 on: repository_dispatch
 
 jobs:
-  webservices-dispatch-action:
+  rerender-action:
     runs-on: ubuntu-latest
-    name: webservices-dispatch-action
+    name: webservices
     steps:
-      - name: webservices-dispatch-action
-        id: webservices-dispatch-action
+      - name: webservices
+        id: webservices
         uses: conda-forge/webservices-dispatch-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
