@@ -1,0 +1,12 @@
+name: 'rerender-action'
+description: 'conda-forge rerender GitHub Action'
+author: conda-forge core (@conda-forge/core)
+inputs:
+  github_token:
+    description: 'github token'
+    required: true
+runs:
+  using: 'docker'
+  image: 'docker://condaforge/rerender-action:prod'
+  args:
+    - ${{ inputs.github_token }}

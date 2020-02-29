@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+echo " "
+echo "==================================================================================================="
+echo "==================================================================================================="
+
+git config --global user.name ${GITHUB_ACTOR}
+git config --global user.email "github-actions@email.com"
+
+source /opt/conda/etc/profile.d/conda.sh
+
+conda config --set show_channel_urls True
+conda config --add channels conda-forge
+conda config --show-sources
+conda config --set always_yes yes
+conda config --set channel_priority strict
+
+conda activate base
+
+conda update conda-smithy conda-forge-pinning conda-build -y --quiet
+
+conda info
+
+echo " "
+echo "==================================================================================================="
+echo "==================================================================================================="
+
+python /opt/conda-forge/rerender.py
