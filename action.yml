@@ -1,5 +1,5 @@
 name: 'webservices-dispatch-action'
-description: 'conda-forge rerender GitHub Action'
+description: 'conda-forge webservices dispatch GitHub Action'
 author: conda-forge core (@conda-forge/core)
 inputs:
   github_token:
