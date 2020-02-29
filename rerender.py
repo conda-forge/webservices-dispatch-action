@@ -37,7 +37,7 @@ def rerender(git_repo):
     LOGGER.info('rerendering')
     curr_head = git_repo.active_branch.commit
     ret = subprocess.call(
-        ["conda", "smithy", "rerender", "-c", "auto"],
+        ["conda", "smithy", "rerender", "-c", "auto", "--no-check-uptodate"],
         cwd=git_repo.working_dir,
     )
 
