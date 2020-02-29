@@ -34,6 +34,12 @@ The GitHub action always points to the `prod` tag of the
 [condaforge/rerender-action](https://hub.docker.com/repository/docker/condaforge/rerender-action)
 Docker image.
 
- - To redeploy the bot, push a new image to the `prod` tag.
- - To take the bot down, delete the tag from the Docker repository. The GitHub Action
-   will still run in this case, but it will always fail.
+ - To redeploy the rerender action, push a new image to the `prod` tag.
+
+   ```bash
+   docker build -t condaforge/rerender-action:dev .
+   docker push condaforge/rerender-action:prod
+   ```
+
+ - To take the rerender action down, delete the tag from the Docker repository.
+   The GitHub Action will still run in this case, but it will always fail.

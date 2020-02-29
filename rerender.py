@@ -4,8 +4,6 @@ import logging
 import pprint
 import tempfile
 import subprocess
-import requests
-import json
 
 import urllib3.util.retry
 
@@ -106,7 +104,7 @@ def main():
     LOGGER.info('github event: %s', event_name)
     LOGGER.info('github event data:\n%s', pprint.pformat(event_data))
 
-    if event_name in ['repository_dispatch']:
+    if event_name in ['repository_dispatch'] and event_data['action'] == 'rerender':
         pr_num = int(event_data['client_payload']['pr'])
         repo_name = event_data['repository']['full_name']
 
