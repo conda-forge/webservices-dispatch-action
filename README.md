@@ -1,6 +1,6 @@
 # webservices-dispatch-action
 
-a GitHub action to rerender conda-forge feedstocks
+a GitHub action to run webservices tasks conda-forge feedstocks
 
 ## Usage
 
@@ -10,7 +10,7 @@ To use this action, add the following YAML file at `.github/workflows/rerender.y
 on: repository_dispatch
 
 jobs:
-  rerender-action:
+  webservices:
     runs-on: ubuntu-latest
     name: webservices
     steps:
@@ -22,7 +22,9 @@ jobs:
 ```
 
 The admin web service will create the appropriate `dispatch` event with the
-correct data
+correct data.
+
+For example, a rerender uses:
 
 ```json
 {"event_type": "rerender", "client_payload": {"pr": 12}}
