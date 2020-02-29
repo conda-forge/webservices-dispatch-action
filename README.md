@@ -37,7 +37,7 @@ Docker image.
  - To redeploy the rerender action, push a new image to the `prod` tag.
 
    ```bash
-   docker build -t condaforge/webservices-dispatch-action:dev .
+   docker build -t condaforge/webservices-dispatch-action:prod .
    docker push condaforge/webservices-dispatch-action:prod
    ```
 
