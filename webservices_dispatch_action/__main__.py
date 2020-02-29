@@ -37,6 +37,9 @@ def main():
             gh_repo = gh.get_repo(repo_name)
             pr = gh_repo.get_pull(pr_num)
 
+            if pr.state == 'closed':
+                raise ValueError("Closed PRs cannot be rerendered!")
+
             with tempfile.TemporaryDirectory() as tmpdir:
                 # clone the head repo
                 pr_branch = pr.head.ref
