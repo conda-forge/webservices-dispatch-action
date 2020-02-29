@@ -37,7 +37,7 @@ headers = {
 r = requests.post(
     ("https://api.github.com/repos/conda-forge/"
      "cf-autotick-bot-test-package-feedstock/dispatches"),
-    data=json.dumps({"event_type": "rerender", "client_payload": {"pr": 18}}),
+    data=json.dumps({"event_type": "rerender", "client_payload": {"pr": 19}}),
     headers=headers,
 )
 print('    dispatch event status code:', r.status_code)
