@@ -41,6 +41,9 @@ def comment_and_push_per_changed(
 Hi! This is the friendly automated conda-forge-webservice.
 I tried to rerender for you, but it looks like I wasn't able to push to the {}
 branch of {}/{}. Did you check the "Allow edits from maintainers" box?
+
+**NOTE**: PRs from organization accounts cannot be rerendered because of GitHub 
+permissions.
 """.format(pr_branch, pr_owner, pr_repo)
     else:
         if rerender_error:
