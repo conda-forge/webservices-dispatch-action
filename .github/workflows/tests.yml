@@ -1,0 +1,57 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request: null
+
+jobs:
+  tests:
+    name: tests
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        DO_DOCKER_BUILD: [0, 1]
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: 3.8
+          channels: conda-forge,defaults
+          channel-priority: strict
+          show-channel-urls: true
+
+      - name: configure conda and install code
+        shell: bash -l {0}
+        run: |
+          conda update -q conda
+          conda info -a
+
+          conda install \
+              git \
+              python=3.7 \
+              pip \
+              tini \
+              pygithub \
+              gitpython \
+              requests \
+              flake8 \
+              pytest \
+              conda-smithy \
+              conda-forge-pinning \
+              conda-build
+
+          pip install --no-deps -e .
+
+      - name: test
+        shell: bash -l {0}
+        run: |
+          if [[ "${DO_DOCKER_BUILD}" == "0" ]]; then
+            flake8 webservices_dispatch_action
+            pytest -vv webservices_dispatch_action
+            command -v run-webservices-dispatch-action
+          else
+            docker build -t test .
+          fi
