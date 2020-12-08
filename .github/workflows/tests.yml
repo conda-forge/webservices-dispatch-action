@@ -26,7 +26,6 @@ jobs:
       - name: configure conda and install code
         shell: bash -l {0}
         run: |
-          conda update -q conda
           conda info -a
 
           conda install \
