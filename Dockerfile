@@ -49,7 +49,9 @@ RUN echo "**** install dev packages ****" && \
         tini \
         pygithub \
         requests \
-        gitpython && \
+        gitpython \
+        mamba \
+        pyyaml && \
     \
     echo "**** cleanup ****" && \
     rm -rf /var/cache/apk/* && \
