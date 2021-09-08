@@ -34,6 +34,8 @@ def rerender(git_repo):
         )
         changed, rerender_error = True, False
 
+    return changed, rerender_error
+
 
 def ensure_output_validation_is_on(git_repo):
     pth = os.path.join(git_repo.working_dir, "conda-forge.yml")
