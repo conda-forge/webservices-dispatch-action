@@ -66,9 +66,10 @@ jobs:
         shell: bash -l {0}
         run: |
           docker login -u condaforgebot -p ${DH_PASSWORD}
-          pushd tests
-          python run_live_test.py --build-and-push
-          popd
+          git config --global user.name "conda-forge-admin"
+          git config --global user.email "pelson.pub+conda-forge@gmail.com"
+          git config --global pull.rebase false
+          python tests/run_live_test.py --build-and-push
         env:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
           DH_PASSWORD: ${{ secrets.DH_PASSWORD }}
