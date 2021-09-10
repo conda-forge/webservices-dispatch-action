@@ -52,3 +52,19 @@ jobs:
         shell: bash -l {0}
         run: |
           docker build -t test .
+
+      - name: generate token
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.CF_CURATOR_APP_ID }}
+          private_key: ${{ secrets.CF_CURATOR_PRIVATE_KEY }}
+
+      - name: run live tests
+        shell: bash -l {0}
+        run: |
+          pushd tests
+          python run_live_test.py --build-and-push
+          popd
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}

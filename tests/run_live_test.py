@@ -3,13 +3,13 @@ This script will run a live integration test of the rerendering
 action. To use it do the following
 
 1. Make sure you have a valid github token in your environment called
-   "GITHUB_TOKEN".
+   "GH_TOKEN".
 2. Make surre you have pushed the new version of the action to the `dev`
    docker image tag.
 
    You can run
 
-     docker build -t condaforge/webservices-dispatch-action:dev .
+      docker build -t condaforge/webservices-dispatch-action:dev .
       docker push condaforge/webservices-dispatch-action:dev
 
    or pass `--build-and-push` when running the test script.
@@ -49,7 +49,7 @@ def pushd(new_dir):
 def _run_test():
     print('sending repo dispatch event to rerender...')
     headers = {
-        "authorization": "Bearer %s" % os.environ['GITHUB_TOKEN'],
+        "authorization": "Bearer %s" % os.environ['GH_TOKEN'],
         'content-type': 'application/json',
     }
     r = requests.post(
