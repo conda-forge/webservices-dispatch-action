@@ -19,15 +19,17 @@ jobs:
           channels: conda-forge,defaults
           channel-priority: strict
           show-channel-urls: true
+          miniforge-version: latest
+          miniforge-variant: Mambaforge
 
       - name: configure conda and install code
         shell: bash -l {0}
         run: |
           conda info -a
 
-          conda install \
+          mamba install \
               git \
-              python=3.7 \
+              python=3.8 \
               pip \
               tini \
               pygithub \

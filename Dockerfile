@@ -41,7 +41,7 @@ RUN echo "**** install dev packages ****" && \
     conda update --all && \
     conda install --quiet \
         git \
-        python=3.7 \
+        python=3.8 \
         conda-smithy \
         conda-forge-pinning \
         conda-build \
