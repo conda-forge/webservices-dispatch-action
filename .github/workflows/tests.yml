@@ -50,11 +50,11 @@ jobs:
           pytest -vv webservices_dispatch_action
           command -v run-webservices-dispatch-action
 
-      - name: build the docker image
-        shell: bash -l {0}
-        run: |
-          docker build -t test .
-
+      # - name: build the docker image
+      #   shell: bash -l {0}
+      #   run: |
+      #     docker build -t test .
+      #
       - name: generate token
         id: generate_token
         uses: tibdex/github-app-token@v1
