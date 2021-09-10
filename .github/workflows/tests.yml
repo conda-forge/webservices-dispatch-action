@@ -65,8 +65,10 @@ jobs:
       - name: run live tests
         shell: bash -l {0}
         run: |
+          docker login -u condaforgebot -p ${DH_PASSWORD}
           pushd tests
           python run_live_test.py --build-and-push
           popd
         env:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+          DH_PASSWORD: ${{ secrets.DH_PASSWORD }}
