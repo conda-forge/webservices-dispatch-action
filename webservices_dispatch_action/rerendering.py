@@ -17,6 +17,7 @@ def rerender(git_repo):
     ret = subprocess.call(
         ["conda", "smithy", "rerender", "-c", "auto", "--no-check-uptodate"],
         cwd=git_repo.working_dir,
+        env={},
     )
 
     if ret:
