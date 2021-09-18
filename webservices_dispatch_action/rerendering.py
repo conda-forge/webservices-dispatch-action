@@ -17,7 +17,11 @@ def rerender(git_repo):
     ret = subprocess.call(
         ["conda", "smithy", "rerender", "-c", "auto", "--no-check-uptodate"],
         cwd=git_repo.working_dir,
-        env={},
+        env={
+            k: v
+            for k, v in os.environ.items()
+            if k not in ["INPUT_GITHUB_TOKEN"] and "GITHUB_TOKEN" not in k
+        },
     )
 
     if ret:
