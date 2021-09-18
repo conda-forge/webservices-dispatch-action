@@ -82,7 +82,11 @@ def _run_test():
 
             with pushd("cf-autotick-bot-test-package-feedstock"):
                 print("checkout branch...")
-                subprocess.run("git checkout rerender-live-test", shell=True, check=True)
+                subprocess.run(
+                    "git checkout rerender-live-test",
+                    shell=True,
+                    check=True,
+                )
 
                 print("checking the git history")
                 c = subprocess.run(
@@ -99,7 +103,7 @@ def _run_test():
 
 def _change_action_branch(branch):
     print("moving repo to %s action" % branch, flush=True)
-    subprocess.run("git checkout master", shell=True, Check=True)
+    subprocess.run("git checkout master", shell=True, check=True)
 
     with open(".github/workflows/webservices.yml", "w") as fp:
         fp.write("""\
@@ -118,16 +122,16 @@ jobs:
 """ % branch)
 
     print("commiting...", flush=True)
-    subprocess.run("git add .github/workflows/webservices.yml", shell=True, Check=True)
+    subprocess.run("git add .github/workflows/webservices.yml", shell=True, check=True)
     subprocess.run(
         "git commit "
         "-m "
         "'[ci skip] move rerender action to branch %s'" % branch,
-        shell=True, Check=True
+        shell=True, check=True
     )
 
     print("push to origin...", flush=True)
-    subprocess.run("git push", shell=True, Check=True)
+    subprocess.run("git push", shell=True, check=True)
 
 
 parser = argparse.ArgumentParser(
@@ -159,8 +163,8 @@ with tempfile.TemporaryDirectory() as tmpdir:
             "git clone "
             "https://x-access-token:${GH_TOKEN}@github.com/conda-forge/"
             "cf-autotick-bot-test-package-feedstock.git",
-           shell=True,
-           check=True,
+            shell=True,
+            check=True,
         )
 
         with pushd("cf-autotick-bot-test-package-feedstock"):
@@ -168,24 +172,28 @@ with tempfile.TemporaryDirectory() as tmpdir:
                 _change_action_branch("dev")
 
                 print("checkout branch...")
-                subprocess.run("git checkout rerender-live-test", shell=True, Check=True)
+                subprocess.run(
+                    "git checkout rerender-live-test",
+                    shell=True,
+                    check=True,
+                )
 
                 print("removing files...")
-                subprocess.run("git rm .ci_support/*.yaml", shell=True, Check=True)
+                subprocess.run("git rm .ci_support/*.yaml", shell=True, check=True)
 
                 print("git status...")
-                subprocess.run("git status", shell=True, Check=True)
+                subprocess.run("git status", shell=True, check=True)
 
                 print("commiting...")
                 subprocess.run(
                     "git commit "
                     "-m "
                     "'remove ci scripts to trigger rerender'",
-                    shell=True, Check=True
+                    shell=True, check=True
                 )
 
                 print("push to origin...")
-                subprocess.run("git push", shell=True, Check=True)
+                subprocess.run("git push", shell=True, check=True)
 
                 _run_test()
 
