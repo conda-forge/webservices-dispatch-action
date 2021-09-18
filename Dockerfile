@@ -37,7 +37,7 @@ RUN echo "**** install dev packages ****" && \
     conda config --show-sources  && \
     conda config --set always_yes yes && \
     conda config --set channel_priority strict && \
-    conda update --all && \
+    mamba update --all && \
     mamba install --quiet \
         git \
         python=3.8 \
