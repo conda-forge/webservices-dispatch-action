@@ -34,6 +34,7 @@ import requests
 import contextlib
 import subprocess
 import argparse
+import glob
 
 
 @contextlib.contextmanager
@@ -178,22 +179,23 @@ with tempfile.TemporaryDirectory() as tmpdir:
                     check=True,
                 )
 
-                print("removing files...")
-                subprocess.run("git rm .ci_support/*.yaml", shell=True, check=True)
+                if len(glob.glob(".ci_support/*.yaml")) > 0:
+                    print("removing files...")
+                    subprocess.run("git rm .ci_support/*.yaml", shell=True, check=True)
 
-                print("git status...")
-                subprocess.run("git status", shell=True, check=True)
+                    print("git status...")
+                    subprocess.run("git status", shell=True, check=True)
 
-                print("commiting...")
-                subprocess.run(
-                    "git commit "
-                    "-m "
-                    "'remove ci scripts to trigger rerender'",
-                    shell=True, check=True
-                )
+                    print("commiting...")
+                    subprocess.run(
+                        "git commit "
+                        "-m "
+                        "'remove ci scripts to trigger rerender'",
+                        shell=True, check=True
+                    )
 
-                print("push to origin...")
-                subprocess.run("git push", shell=True, check=True)
+                    print("push to origin...")
+                    subprocess.run("git push", shell=True, check=True)
 
                 _run_test()
 
