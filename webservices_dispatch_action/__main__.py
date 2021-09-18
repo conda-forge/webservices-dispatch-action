@@ -45,9 +45,7 @@ def main():
                 pr_branch = pr.head.ref
                 pr_owner = pr.head.repo.owner.login
                 pr_repo = pr.head.repo.name
-                repo_url = "https://%s:%s@github.com/%s/%s.git" % (
-                    os.environ['GITHUB_ACTOR'],
-                    os.environ['INPUT_GITHUB_TOKEN'],
+                repo_url = "https://github.com/%s/%s.git" % (
                     pr_owner,
                     pr_repo,
                 )
