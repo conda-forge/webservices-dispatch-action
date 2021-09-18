@@ -75,10 +75,7 @@ def comment_and_push_per_changed(
                     pr_owner,
                     pr_repo,
                 ),
-                "https://github.com/%s/%s.git" % (
-                    pr_owner,
-                    pr_repo,
-                ),
+                push=True,
             )
             git_repo.remotes.origin.push()
         except GitCommandError as e:
@@ -97,12 +94,7 @@ permissions.
                     pr_owner,
                     pr_repo,
                 ),
-                "https://%s:%s@github.com/%s/%s.git" % (
-                    os.environ['GITHUB_ACTOR'],
-                    os.environ['INPUT_GITHUB_TOKEN'],
-                    pr_owner,
-                    pr_repo,
-                ),
+                push=True,
             )
     else:
         if rerender_error:
