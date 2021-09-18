@@ -72,20 +72,23 @@ def _run_test():
     with tempfile.TemporaryDirectory() as tmpdir:
         with pushd(tmpdir):
             print("cloning...")
-            os.system(
+            subprocess.run(
                 "git clone "
                 "https://github.com/conda-forge/"
                 "cf-autotick-bot-test-package-feedstock.git",
+                shell=True,
+                check=True,
             )
 
             with pushd("cf-autotick-bot-test-package-feedstock"):
                 print("checkout branch...")
-                os.system("git checkout rerender-live-test")
+                subprocess.run("git checkout rerender-live-test", shell=True, check=True)
 
                 print("checking the git history")
                 c = subprocess.run(
                     ["git", "log", "--pretty=oneline", "-n", "1"],
                     capture_output=True,
+                    check=True,
                 )
                 output = c.stdout.decode('utf-8')
                 print("    last commit:", output.strip())
@@ -96,7 +99,7 @@ def _run_test():
 
 def _change_action_branch(branch):
     print("moving repo to %s action" % branch, flush=True)
-    os.system("git checkout master")
+    subprocess.run("git checkout master", shell=True, Check=True)
 
     with open(".github/workflows/webservices.yml", "w") as fp:
         fp.write("""\
@@ -115,15 +118,16 @@ jobs:
 """ % branch)
 
     print("commiting...", flush=True)
-    os.system("git add .github/workflows/webservices.yml")
-    os.system(
+    subprocess.run("git add .github/workflows/webservices.yml", shell=True, Check=True)
+    subprocess.run(
         "git commit "
         "-m "
-        "'[ci skip] move rerender action to branch %s'" % branch
+        "'[ci skip] move rerender action to branch %s'" % branch,
+        shell=True, Check=True
     )
 
     print("push to origin...", flush=True)
-    os.system("git push")
+    subprocess.run("git push", shell=True, Check=True)
 
 
 parser = argparse.ArgumentParser(
@@ -151,10 +155,12 @@ print('making an edit to the head ref...')
 with tempfile.TemporaryDirectory() as tmpdir:
     with pushd(tmpdir):
         print("cloning...")
-        os.system(
+        subprocess.run(
             "git clone "
-            "https://github.com/conda-forge/"
+            "https://x-access-token:${GH_TOKEN}@github.com/conda-forge/"
             "cf-autotick-bot-test-package-feedstock.git",
+           shell=True,
+           check=True,
         )
 
         with pushd("cf-autotick-bot-test-package-feedstock"):
@@ -162,23 +168,24 @@ with tempfile.TemporaryDirectory() as tmpdir:
                 _change_action_branch("dev")
 
                 print("checkout branch...")
-                os.system("git checkout rerender-live-test")
+                subprocess.run("git checkout rerender-live-test", shell=True, Check=True)
 
                 print("removing files...")
-                os.system("git rm .ci_support/*.yaml")
+                subprocess.run("git rm .ci_support/*.yaml", shell=True, Check=True)
 
                 print("git status...")
-                os.system("git status")
+                subprocess.run("git status", shell=True, Check=True)
 
                 print("commiting...")
-                os.system(
+                subprocess.run(
                     "git commit "
                     "-m "
-                    "'remove ci scripts to trigger rerender'"
+                    "'remove ci scripts to trigger rerender'",
+                    shell=True, Check=True
                 )
 
                 print("push to origin...")
-                os.system("git push")
+                subprocess.run("git push", shell=True, Check=True)
 
                 _run_test()
 
