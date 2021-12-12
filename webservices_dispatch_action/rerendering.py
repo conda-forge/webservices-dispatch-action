@@ -25,9 +25,21 @@ def rerender(git_repo):
     )
 
     if ret:
-        return False, True
+        changed, rerender_error = False, True
+    elif git_repo.active_branch.commit == curr_head:
+        changed, rerender_error = False, False
     else:
-        return (git_repo.active_branch.commit != curr_head) or changed, False
+        subprocess.call(
+           ["git", "checkout", "HEAD~1", "--", ".github/workflows/*"],
+           cwd=git_repo.working_dir,
+        )
+        subprocess.call(
+           ["git", "commit", "--amend", "--allow-empty", "--no-edit"],
+           cwd=git_repo.working_dir,
+        )
+        changed, rerender_error = True, False
+
+    return changed, rerender_error
 
 
 def ensure_output_validation_is_on(git_repo):
