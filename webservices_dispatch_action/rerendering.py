@@ -17,6 +17,11 @@ def rerender(git_repo):
     ret = subprocess.call(
         ["conda", "smithy", "rerender", "-c", "auto", "--no-check-uptodate"],
         cwd=git_repo.working_dir,
+        env={
+            k: v
+            for k, v in os.environ.items()
+            if k not in ["INPUT_GITHUB_TOKEN"] and "GITHUB_TOKEN" not in k
+        },
     )
 
     if ret:
@@ -75,6 +80,15 @@ def comment_and_push_per_changed(
     message = None
     if changed:
         try:
+            git_repo.remotes.origin.set_url(
+                "https://%s:%s@github.com/%s/%s.git" % (
+                    os.environ['GITHUB_ACTOR'],
+                    os.environ['INPUT_GITHUB_TOKEN'],
+                    pr_owner,
+                    pr_repo,
+                ),
+                push=True,
+            )
             git_repo.remotes.origin.push()
         except GitCommandError as e:
             LOGGER.critical(repr(e))
@@ -86,6 +100,14 @@ branch of {}/{}. Did you check the "Allow edits from maintainers" box?
 **NOTE**: PRs from organization accounts cannot be rerendered because of GitHub
 permissions.
 """.format(pr_branch, pr_owner, pr_repo)
+        finally:
+            git_repo.remotes.origin.set_url(
+                "https://github.com/%s/%s.git" % (
+                    pr_owner,
+                    pr_repo,
+                ),
+                push=True,
+            )
     else:
         if rerender_error:
             doc_url = (

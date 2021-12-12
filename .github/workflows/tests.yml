@@ -3,7 +3,7 @@ name: tests
 on:
   push:
     branches:
-      - master
+      - main
   pull_request: null
 
 jobs:
@@ -19,15 +19,17 @@ jobs:
           channels: conda-forge,defaults
           channel-priority: strict
           show-channel-urls: true
+          miniforge-version: latest
+          miniforge-variant: Mambaforge
 
       - name: configure conda and install code
         shell: bash -l {0}
         run: |
           conda info -a
 
-          conda install \
+          mamba install \
               git \
-              python=3.7 \
+              python=3.8 \
               pip \
               tini \
               pygithub \
@@ -48,7 +50,26 @@ jobs:
           pytest -vv webservices_dispatch_action
           command -v run-webservices-dispatch-action
 
-      - name: build the docker image
+      # - name: build the docker image
+      #   shell: bash -l {0}
+      #   run: |
+      #     docker build -t test .
+      #
+      - name: generate token
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.CF_CURATOR_APP_ID }}
+          private_key: ${{ secrets.CF_CURATOR_PRIVATE_KEY }}
+
+      - name: run live tests
         shell: bash -l {0}
         run: |
-          docker build -t test .
+          docker login -u condaforgebot -p ${DH_PASSWORD}
+          git config --global user.name "conda-forge-admin"
+          git config --global user.email "pelson.pub+conda-forge@gmail.com"
+          git config --global pull.rebase false
+          python tests/run_live_test.py --build-and-push
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+          DH_PASSWORD: ${{ secrets.DH_PASSWORD }}
