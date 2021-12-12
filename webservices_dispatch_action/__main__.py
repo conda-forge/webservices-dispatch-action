@@ -66,7 +66,7 @@ def main():
                 changed, rerender_error = rerender(git_repo, can_change_workflows)
 
                 # comment
-                comment_and_push_per_changed(
+                push_error = comment_and_push_per_changed(
                     changed=changed,
                     rerender_error=rerender_error,
                     git_repo=git_repo,
@@ -76,6 +76,13 @@ def main():
                     pr_repo=pr_repo,
                     repo_name=repo_name,
                 )
+
+                if rerender_error or push_error:
+                    raise RuntimeError(
+                        "Rerendering failed! error in push|rerender: %s|%s",
+                        push_error,
+                        rerender_error,
+                    )
         else:
             raise ValueError(
                 'Dispatch action %s cannot be processed!' % event_data['action'])

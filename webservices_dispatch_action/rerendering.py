@@ -97,6 +97,7 @@ def comment_and_push_per_changed(
 
     run_link = _get_run_link(repo_name)
 
+    push_error = False
     message = None
     if changed:
         try:
@@ -111,6 +112,7 @@ def comment_and_push_per_changed(
             )
             git_repo.remotes.origin.push()
         except GitCommandError as e:
+            push_error = True
             LOGGER.critical(repr(e))
             message = """\
 Hi! This is the friendly automated conda-forge-webservice.
@@ -158,3 +160,5 @@ I tried to rerender for you, but it looks like there was nothing to do.
             )
 
         pull.create_issue_comment(message)
+
+    return push_error
