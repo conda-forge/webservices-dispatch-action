@@ -7,7 +7,7 @@ from github import Github
 
 
 def get_actor_token():
-    # we use the otken reset time as a proxy for when it expires
+    # we use the token reset time as a proxy for when it expires
     # by default the app tokens have 1 hour and that is the same as the token
     # reset time.
     # I could not figure out how to get the actual reset time.
