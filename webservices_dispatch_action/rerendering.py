@@ -61,7 +61,7 @@ def _get_actor_token():
     ):
         return "x-access-token", os.environ["INPUT_RERENDERING_GITHUB_TOKEN"]
     else:
-        return os.environ['GITHUB_ACTOR'], os.environ["INPUT_GITHUB_TOKEN"]
+        return "x-access-token", os.environ["INPUT_GITHUB_TOKEN"]
 
 
 def _get_run_link(repo_name):
