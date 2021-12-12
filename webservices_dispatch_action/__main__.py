@@ -71,6 +71,7 @@ def main():
                     pr_branch=pr_branch,
                     pr_owner=pr_owner,
                     pr_repo=pr_repo,
+                    repo_name=repo_name,
                 )
         else:
             raise ValueError(
