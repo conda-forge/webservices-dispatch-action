@@ -79,9 +79,10 @@ def main():
 
                 if rerender_error or push_error:
                     raise RuntimeError(
-                        "Rerendering failed! error in push|rerender: %s|%s",
-                        push_error,
-                        rerender_error,
+                        "Rerendering failed! error in push|rerender: %s|%s" % (
+                            push_error,
+                            rerender_error,
+                        ),
                     )
         else:
             raise ValueError(
