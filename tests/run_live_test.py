@@ -220,3 +220,38 @@ with tempfile.TemporaryDirectory() as tmpdir:
 
             finally:
                 _change_action_branch("master")
+
+                print("checkout branch...")
+                subprocess.run(
+                    "git checkout rerender-live-test",
+                    shell=True,
+                    check=True,
+                )
+
+                print("undoing edit to a workflow...")
+                with open(".github/workflows/automerge.yml", "r") as fp:
+                    lines = fp.readlines()
+
+                for i in range(2):
+                    if len(lines[-1].strip()) == 0:
+                        lines = lines[:-1]
+
+                with open(".github/workflows/automerge.yml", "w") as fp:
+                    fp.write("".join(lines) + "\n")
+
+                subprocess.run(
+                    "git add .github/workflows/automerge.yml",
+                    check=True,
+                    shell=True,
+                )
+
+                print("commiting...")
+                subprocess.run(
+                    "git commit "
+                    "-m "
+                    "'[ci skip] undo workflow changes'",
+                    shell=True, check=True
+                )
+
+                print("push to origin...")
+                subprocess.run("git push", shell=True, check=True)
