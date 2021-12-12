@@ -192,12 +192,12 @@ with tempfile.TemporaryDirectory() as tmpdir:
 
                     print("making an edit to a workflow...")
                     subprocess.run(
-                        "echo ' ' >> .github/workflows/automerge.yaml",
+                        "echo ' ' >> .github/workflows/automerge.yml",
                         shell=True,
                         check=True,
                     )
                     subprocess.run(
-                        "git add .github/workflows/automerge.yaml",
+                        "git add .github/workflows/automerge.yml",
                         check=True,
                         shell=True,
                     )
