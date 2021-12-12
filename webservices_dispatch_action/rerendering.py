@@ -13,7 +13,7 @@ LOGGER = logging.getLogger(__name__)
 def rerender(git_repo, can_change_workflows):
     LOGGER.info('rerendering')
 
-    changed = ensure_output_validation_is_on(git_repo)
+    ensure_output_validation_is_on(git_repo)
 
     curr_head = git_repo.active_branch.commit
     env = dict()
