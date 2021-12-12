@@ -227,6 +227,11 @@ with tempfile.TemporaryDirectory() as tmpdir:
                     shell=True,
                     check=True,
                 )
+                subprocess.run(
+                    "git pull",
+                    shell=True,
+                    check=True,
+                )
 
                 print("undoing edit to a workflow...")
                 with open(".github/workflows/automerge.yml", "r") as fp:
