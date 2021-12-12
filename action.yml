@@ -5,8 +5,13 @@ inputs:
   github_token:
     description: 'github token'
     required: true
+  rerendering_github_token:
+    description: 'github token for rerendering'
+    required: false
+    default: ''
 runs:
   using: 'docker'
-  image: 'docker://condaforge/webservices-dispatch-action:dev'
+  image: 'docker://condaforge/webservices-dispatch-action:prod'
   args:
     - ${{ inputs.github_token }}
+    - ${{ inputs.rerendering_github_token }}
