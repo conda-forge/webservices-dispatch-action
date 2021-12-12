@@ -253,6 +253,7 @@ with tempfile.TemporaryDirectory() as tmpdir:
                 print("commiting...")
                 subprocess.run(
                     "git commit "
+                    "--allow-empty "
                     "-m "
                     "'[ci skip] undo workflow changes'",
                     shell=True, check=True
