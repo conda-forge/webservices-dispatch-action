@@ -1,7 +1,28 @@
+import time
+import os
 import requests
 import urllib3.util.retry
 
 from github import Github
+
+
+def get_actor_token():
+    # we use the otken reset time as a proxy for when it expires
+    # by default the app tokens have 1 hour and that is the same as the token
+    # reset time.
+    # I could not figure out how to get the actual reset time.
+    now = time.time()
+    if (
+        "INPUT_RERENDERING_GITHUB_TOKEN" in os.environ
+        and len(os.environ["INPUT_RERENDERING_GITHUB_TOKEN"]) > 0
+        and (
+            Github(os.environ["INPUT_RERENDERING_GITHUB_TOKEN"]).rate_limiting_resettime
+            > now
+        )
+    ):
+        return "x-access-token", os.environ["INPUT_RERENDERING_GITHUB_TOKEN"], True
+    else:
+        return "x-access-token", os.environ["INPUT_GITHUB_TOKEN"], False
 
 
 def create_api_sessions(github_token):

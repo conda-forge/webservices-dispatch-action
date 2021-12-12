@@ -106,6 +106,12 @@ def _change_action_branch(branch):
     print("moving repo to %s action" % branch, flush=True)
     subprocess.run("git checkout master", shell=True, check=True)
 
+    data = (
+        branch,
+        "rerendering_github_token: ${{ secrets.RERENDERING_GITHUB_TOKEN }}"
+        if branch == "dev" else "",
+    )
+
     with open(".github/workflows/webservices.yml", "w") as fp:
         fp.write("""\
 on: repository_dispatch
@@ -120,7 +126,8 @@ jobs:
         uses: conda-forge/webservices-dispatch-action@%s
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-""" % branch)
+          %s
+""" % data)
 
     print("commiting...", flush=True)
     subprocess.run("git add .github/workflows/webservices.yml", shell=True, check=True)

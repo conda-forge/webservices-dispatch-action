@@ -6,7 +6,9 @@ import tempfile
 
 from git import Repo
 
-from webservices_dispatch_action.api_sessions import create_api_sessions
+from webservices_dispatch_action.api_sessions import (
+    create_api_sessions, get_actor_token
+)
 from webservices_dispatch_action.rerendering import (
     rerender,
     comment_and_push_per_changed,
@@ -60,7 +62,8 @@ def main():
                 )
 
                 # rerender
-                changed, rerender_error = rerender(git_repo)
+                _, _, can_change_workflows = get_actor_token()
+                changed, rerender_error = rerender(git_repo, can_change_workflows)
 
                 # comment
                 comment_and_push_per_changed(

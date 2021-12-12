@@ -5,23 +5,29 @@ import subprocess
 import yaml
 from git import GitCommandError
 
+from .api_sessions import get_actor_token
+
 LOGGER = logging.getLogger(__name__)
 
 
-def rerender(git_repo):
+def rerender(git_repo, can_change_workflows):
     LOGGER.info('rerendering')
 
     changed = ensure_output_validation_is_on(git_repo)
 
     curr_head = git_repo.active_branch.commit
+    env = dict()
+    for k, v in os.environ.items():
+        if (
+            k not in ["INPUT_GITHUB_TOKEN", "INPUT_RERENDERING_GITHUB_TOKEN"]
+            and "GITHUB_TOKEN" not in k
+        ):
+            env[k] = v
+
     ret = subprocess.call(
         ["conda", "smithy", "rerender", "-c", "auto", "--no-check-uptodate"],
         cwd=git_repo.working_dir,
-        env={
-            k: v
-            for k, v in os.environ.items()
-            if k not in ["INPUT_GITHUB_TOKEN"] and "GITHUB_TOKEN" not in k
-        },
+        env=env,
     )
 
     if ret:
@@ -29,14 +35,15 @@ def rerender(git_repo):
     elif git_repo.active_branch.commit == curr_head:
         changed, rerender_error = False, False
     else:
-        subprocess.call(
-           ["git", "checkout", "HEAD~1", "--", ".github/workflows/*"],
-           cwd=git_repo.working_dir,
-        )
-        subprocess.call(
-           ["git", "commit", "--amend", "--allow-empty", "--no-edit"],
-           cwd=git_repo.working_dir,
-        )
+        if not can_change_workflows:
+            subprocess.call(
+               ["git", "checkout", "HEAD~1", "--", ".github/workflows/*"],
+               cwd=git_repo.working_dir,
+            )
+            subprocess.call(
+               ["git", "commit", "--amend", "--allow-empty", "--no-edit"],
+               cwd=git_repo.working_dir,
+            )
         changed, rerender_error = True, False
 
     return changed, rerender_error
@@ -66,16 +73,6 @@ def ensure_output_validation_is_on(git_repo):
         return False
 
 
-def _get_actor_token():
-    if (
-        "INPUT_RERENDERING_GITHUB_TOKEN" in os.environ
-        and len(os.environ["INPUT_RERENDERING_GITHUB_TOKEN"]) > 0
-    ):
-        return "x-access-token", os.environ["INPUT_RERENDERING_GITHUB_TOKEN"]
-    else:
-        return "x-access-token", os.environ["INPUT_GITHUB_TOKEN"]
-
-
 def _get_run_link(repo_name):
     run_id = os.environ["GITHUB_RUN_ID"]
     return f"https://github.com/{repo_name}/actions/runs/{run_id}"
@@ -93,7 +90,7 @@ def comment_and_push_per_changed(
         pr_repo,
     )
 
-    actor, token = _get_actor_token()
+    actor, token, _ = get_actor_token()
     run_link = _get_run_link(repo_name)
 
     message = None
