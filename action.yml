@@ -11,7 +11,7 @@ inputs:
     default: ''
 runs:
   using: 'docker'
-  image: 'docker://condaforge/webservices-dispatch-action:prod'
+  image: 'docker://condaforge/webservices-dispatch-action:dev'
   args:
     - ${{ inputs.github_token }}
     - ${{ inputs.rerendering_github_token }}
