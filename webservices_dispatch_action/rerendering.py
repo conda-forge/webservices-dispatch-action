@@ -83,6 +83,11 @@ def comment_and_push_per_changed(
     changed, rerender_error, git_repo, pull, pr_branch, pr_owner, pr_repo,
     repo_name,
 ):
+    actor, token, can_change_workflows = get_actor_token()
+    LOGGER.info(
+        'token can change wortkflows: %s', can_change_workflows,
+    )
+
     LOGGER.info(
         'pushing and commenting: branch|owner|repo = %s|%s|%s',
         pr_branch,
@@ -90,7 +95,6 @@ def comment_and_push_per_changed(
         pr_repo,
     )
 
-    actor, token, _ = get_actor_token()
     run_link = _get_run_link(repo_name)
 
     message = None

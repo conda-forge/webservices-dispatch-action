@@ -190,6 +190,18 @@ with tempfile.TemporaryDirectory() as tmpdir:
                     print("removing files...")
                     subprocess.run("git rm .ci_support/*.yaml", shell=True, check=True)
 
+                    print("making an edit to a workflow...")
+                    subprocess.run(
+                        "echo ' ' >> .github/workflows/automerge.yaml",
+                        shell=True,
+                        check=True,
+                    )
+                    subprocess.run(
+                        "git add .github/workflows/automerge.yaml",
+                        check=True,
+                        shell=True,
+                    )
+
                     print("git status...")
                     subprocess.run("git status", shell=True, check=True)
 
