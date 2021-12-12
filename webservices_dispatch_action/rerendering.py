@@ -65,14 +65,8 @@ def _get_actor_token():
 
 
 def _get_run_link(repo_name):
-    if (
-        "INPUT_RUN_ID" in os.environ
-        and len(os.environ["INPUT_RUN_ID"]) > 0
-    ):
-        run_id = os.environ["INPUT_RUN_ID"]
-        return f"https://github.com/{repo_name}/actions/runs/{run_id}"
-    else:
-        return None
+    run_id = os.environ["GITHUB_RUN_ID"]
+    return f"https://github.com/{repo_name}/actions/runs/{run_id}"
 
 
 def comment_and_push_per_changed(

@@ -9,14 +9,9 @@ inputs:
     description: 'github token for rerendering'
     required: false
     default: ''
-  run_id:
-    description: 'github run id for debugging link'
-    required: false
-    default: ''
 runs:
   using: 'docker'
   image: 'docker://condaforge/webservices-dispatch-action:prod'
   args:
     - ${{ inputs.github_token }}
     - ${{ inputs.rerendering_github_token }}
-    - ${{ inputs.run_id }}

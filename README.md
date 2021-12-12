@@ -20,7 +20,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           rerendering_github_token: ${{ secrets.RERENDERING_GITHUB_TOKEN }}
-          run_id: ${{ github.run_id }}
 ```
 
 The admin web service will create the appropriate `dispatch` event with the
