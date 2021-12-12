@@ -242,7 +242,7 @@ with tempfile.TemporaryDirectory() as tmpdir:
                         lines = lines[:-1]
 
                 with open(".github/workflows/automerge.yml", "w") as fp:
-                    fp.write("".join(lines) + "\n")
+                    fp.write("".join(lines))
 
                 subprocess.run(
                     "git add .github/workflows/automerge.yml",

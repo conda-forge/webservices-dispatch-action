@@ -65,7 +65,7 @@ jobs:
       - name: run live tests
         shell: bash -l {0}
         run: |
-          docker login -u condaforgebot -p ${DH_PASSWORD}
+          echo "${DH_PASSWORD}" | docker login -u condaforgebot --password-stdin
           git config --global user.name "conda-forge-admin"
           git config --global user.email "pelson.pub+conda-forge@gmail.com"
           git config --global pull.rebase false

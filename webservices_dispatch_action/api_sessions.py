@@ -12,14 +12,21 @@ def get_actor_token():
     # reset time.
     # I could not figure out how to get the actual reset time.
     now = time.time()
+    reset_time = now - 10  # default the token to "expired"
     if (
         "INPUT_RERENDERING_GITHUB_TOKEN" in os.environ
         and len(os.environ["INPUT_RERENDERING_GITHUB_TOKEN"]) > 0
-        and (
-            Github(os.environ["INPUT_RERENDERING_GITHUB_TOKEN"]).rate_limiting_resettime
-            > now
-        )
     ):
+        try:
+            # make sure the token works
+            gh = Github(os.environ["INPUT_RERENDERING_GITHUB_TOKEN"])
+            reset_time = gh.rate_limiting_resettime
+        except Exception:
+            gh = None
+    else:
+        gh = None
+
+    if gh is not None and reset_time > now:
         return "x-access-token", os.environ["INPUT_RERENDERING_GITHUB_TOKEN"], True
     else:
         return "x-access-token", os.environ["INPUT_GITHUB_TOKEN"], False
