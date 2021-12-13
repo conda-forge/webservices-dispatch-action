@@ -4,7 +4,7 @@ a GitHub action to run webservices tasks conda-forge feedstocks
 
 ## Usage
 
-To use this action, add the following YAML file at `.github/workflows/rerender.yml`
+To use this action, add the following YAML file at `.github/workflows/webservices.yml`
 
 ```yaml
 on: repository_dispatch
@@ -19,6 +19,7 @@ jobs:
         uses: conda-forge/webservices-dispatch-action@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          rerendering_github_token: ${{ secrets.RERENDERING_GITHUB_TOKEN }}
 ```
 
 The admin web service will create the appropriate `dispatch` event with the

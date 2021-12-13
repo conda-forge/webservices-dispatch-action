@@ -106,6 +106,12 @@ def _change_action_branch(branch):
     print("moving repo to %s action" % branch, flush=True)
     subprocess.run("git checkout master", shell=True, check=True)
 
+    data = (
+        branch,
+        "rerendering_github_token: ${{ secrets.RERENDERING_GITHUB_TOKEN }}"
+        if branch == "dev" else "",
+    )
+
     with open(".github/workflows/webservices.yml", "w") as fp:
         fp.write("""\
 on: repository_dispatch
@@ -120,7 +126,8 @@ jobs:
         uses: conda-forge/webservices-dispatch-action@%s
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-""" % branch)
+          %s
+""" % data)
 
     print("commiting...", flush=True)
     subprocess.run("git add .github/workflows/webservices.yml", shell=True, check=True)
@@ -183,6 +190,18 @@ with tempfile.TemporaryDirectory() as tmpdir:
                     print("removing files...")
                     subprocess.run("git rm .ci_support/*.yaml", shell=True, check=True)
 
+                    print("making an edit to a workflow...")
+                    subprocess.run(
+                        "echo ' ' >> .github/workflows/automerge.yml",
+                        shell=True,
+                        check=True,
+                    )
+                    subprocess.run(
+                        "git add .github/workflows/automerge.yml",
+                        check=True,
+                        shell=True,
+                    )
+
                     print("git status...")
                     subprocess.run("git status", shell=True, check=True)
 
@@ -201,3 +220,44 @@ with tempfile.TemporaryDirectory() as tmpdir:
 
             finally:
                 _change_action_branch("master")
+
+                print("checkout branch...")
+                subprocess.run(
+                    "git checkout rerender-live-test",
+                    shell=True,
+                    check=True,
+                )
+                subprocess.run(
+                    "git pull",
+                    shell=True,
+                    check=True,
+                )
+
+                print("undoing edit to a workflow...")
+                with open(".github/workflows/automerge.yml", "r") as fp:
+                    lines = fp.readlines()
+
+                for i in range(2):
+                    if len(lines[-1].strip()) == 0:
+                        lines = lines[:-1]
+
+                with open(".github/workflows/automerge.yml", "w") as fp:
+                    fp.write("".join(lines))
+
+                subprocess.run(
+                    "git add .github/workflows/automerge.yml",
+                    check=True,
+                    shell=True,
+                )
+
+                print("commiting...")
+                subprocess.run(
+                    "git commit "
+                    "--allow-empty "
+                    "-m "
+                    "'[ci skip] undo workflow changes'",
+                    shell=True, check=True
+                )
+
+                print("push to origin...")
+                subprocess.run("git push", shell=True, check=True)

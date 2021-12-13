@@ -6,7 +6,9 @@ import tempfile
 
 from git import Repo
 
-from webservices_dispatch_action.api_sessions import create_api_sessions
+from webservices_dispatch_action.api_sessions import (
+    create_api_sessions, get_actor_token
+)
 from webservices_dispatch_action.rerendering import (
     rerender,
     comment_and_push_per_changed,
@@ -60,10 +62,11 @@ def main():
                 )
 
                 # rerender
-                changed, rerender_error = rerender(git_repo)
+                _, _, can_change_workflows = get_actor_token()
+                changed, rerender_error = rerender(git_repo, can_change_workflows)
 
                 # comment
-                comment_and_push_per_changed(
+                push_error = comment_and_push_per_changed(
                     changed=changed,
                     rerender_error=rerender_error,
                     git_repo=git_repo,
@@ -71,7 +74,16 @@ def main():
                     pr_branch=pr_branch,
                     pr_owner=pr_owner,
                     pr_repo=pr_repo,
+                    repo_name=repo_name,
                 )
+
+                if rerender_error or push_error:
+                    raise RuntimeError(
+                        "Rerendering failed! error in push|rerender: %s|%s" % (
+                            push_error,
+                            rerender_error,
+                        ),
+                    )
         else:
             raise ValueError(
                 'Dispatch action %s cannot be processed!' % event_data['action'])

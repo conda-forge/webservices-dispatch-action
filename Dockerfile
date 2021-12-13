@@ -8,7 +8,7 @@ LABEL maintainer="conda-forge (@conda-forge/core)"
 
 ENV LANG en_US.UTF-8
 
-ARG CONDA_MD5="2aff37852fa373bbf2ff897f757cf66f"
+ARG CONDA_MD5="678c0078e3a37596cd671f690e852fff"
 ARG CONDA_DIR="/opt/conda"
 
 ENV PATH="$CONDA_DIR/bin:$PATH"
@@ -23,7 +23,7 @@ RUN echo "**** install dev packages ****" && \
     \
     echo "**** get Miniconda ****" && \
     mkdir -p "$CONDA_DIR" && \
-    wget "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-Linux-x86_64.sh" -O miniconda.sh && \
+    wget "https://github.com/conda-forge/miniforge/releases/download/4.11.0-0/Mambaforge-4.11.0-0-Linux-x86_64.sh" -O miniconda.sh && \
     echo "$CONDA_MD5  miniconda.sh" | md5sum -c && \
     \
     echo "**** install Miniconda ****" && \
