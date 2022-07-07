@@ -85,7 +85,7 @@ def comment_and_push_per_changed(
 ):
     actor, token, can_change_workflows = get_actor_token()
     LOGGER.info(
-        'token can change wortkflows: %s', can_change_workflows,
+        'token can change workflows: %s', can_change_workflows,
     )
 
     LOGGER.info(
