@@ -104,7 +104,7 @@ def _run_test():
 
 def _change_action_branch(branch):
     print("moving repo to %s action" % branch, flush=True)
-    subprocess.run("git checkout master", shell=True, check=True)
+    subprocess.run("git checkout main", shell=True, check=True)
 
     data = (
         branch,
@@ -219,7 +219,7 @@ with tempfile.TemporaryDirectory() as tmpdir:
                 _run_test()
 
             finally:
-                _change_action_branch("master")
+                _change_action_branch("main")
 
                 print("checkout branch...")
                 subprocess.run(
