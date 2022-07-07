@@ -120,9 +120,10 @@ Hi! This is the friendly automated conda-forge-webservice.
 I tried to rerender for you, but it looks like I wasn't able to push to the {} \
 branch of {}/{}. Did you check the "Allow edits from maintainers" box?
 
-**NOTE**: PRs from organization accounts or PRs from forks made from organization \
-forks cannot be rerendered because of GitHub permissions. Please fork the \
-feedstock directly from conda-forge into your personal GitHub account.
+**NOTE**: PRs from organization accounts or PRs from forks made from \
+organization forks cannot be rerendered because of GitHub \
+permissions. Please fork the feedstock directly from conda-forge \
+into your personal GitHub account.
 """.format(pr_branch, pr_owner, pr_repo)
         finally:
             git_repo.remotes.origin.set_url(
