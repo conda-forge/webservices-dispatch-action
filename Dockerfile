@@ -40,7 +40,7 @@ RUN echo "**** install dev packages ****" && \
     mamba update --all && \
     mamba install --quiet \
         git \
-        python=3.8 \
+        python=3.10 \
         conda-smithy \
         conda-forge-pinning \
         conda-build \
