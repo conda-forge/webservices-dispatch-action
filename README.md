@@ -1,4 +1,5 @@
 # webservices-dispatch-action
+[![tests](https://github.com/conda-forge/webservices-dispatch-action/actions/workflows/tests.yml/badge.svg)](https://github.com/conda-forge/webservices-dispatch-action/actions/workflows/tests.yml) [![keep-alive](https://github.com/conda-forge/webservices-dispatch-action/actions/workflows/keep-alive.yml/badge.svg)](https://github.com/conda-forge/webservices-dispatch-action/actions/workflows/keep-alive.yml)
 
 a GitHub action to run webservices tasks conda-forge feedstocks
 
