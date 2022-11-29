@@ -5,6 +5,8 @@ on:
     branches:
       - main
   pull_request: null
+  schedule:
+     - cron: "0 6 * * SUN"  # Once weekly on Sunday @ 0600 UTC
 
 jobs:
   tests:
