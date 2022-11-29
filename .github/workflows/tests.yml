@@ -89,7 +89,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           username: condaforgebot
-          password: ${{ DH_PASSWORD }}
+          password: ${{ secrets.DH_PASSWORD }}
 
       - name: Build and push
         uses: docker/build-push-action@v3
