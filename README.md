@@ -46,3 +46,6 @@ Docker image.
 
  - To take the rerender action down, delete the tag from the Docker repository.
    The GitHub Action will still run in this case, but it will always fail.
+
+ - **The docker image is rebuilt on a weekly basis with the docker-push.yml GHA. You must disable this
+   workflow to prevent the prod tag from being repushed.**
