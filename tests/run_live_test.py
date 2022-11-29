@@ -209,7 +209,7 @@ with tempfile.TemporaryDirectory() as tmpdir:
                     subprocess.run(
                         "git commit "
                         "-m "
-                        "'remove ci scripts to trigger rerender'",
+                        "'[ci skip] remove ci scripts to trigger rerender'",
                         shell=True, check=True
                     )
 
