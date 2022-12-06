@@ -8,7 +8,7 @@ jobs:
     name: Alive
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@1b33e4ef553c59eef0e3450666408021f4b0f456
       - uses: gautamkrishnar/keepalive-workflow@v1
         with:
           commit_message: "Ah ah ah, stayin' alive"
