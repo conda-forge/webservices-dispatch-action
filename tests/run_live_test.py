@@ -132,6 +132,7 @@ jobs:
     subprocess.run("git add .github/workflows/webservices.yml", shell=True, check=True)
     subprocess.run(
         "git commit "
+        "--allow-empty "
         "-m "
         "'[ci skip] move rerender action to branch %s'" % branch,
         shell=True, check=True
