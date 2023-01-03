@@ -108,8 +108,7 @@ def _change_action_branch(branch):
 
     data = (
         branch,
-        "rerendering_github_token: ${{ secrets.RERENDERING_GITHUB_TOKEN }}"
-        if branch == "dev" else "",
+        "rerendering_github_token: ${{ secrets.RERENDERING_GITHUB_TOKEN }}",
     )
 
     with open(".github/workflows/webservices.yml", "w") as fp:
@@ -133,6 +132,7 @@ jobs:
     subprocess.run("git add .github/workflows/webservices.yml", shell=True, check=True)
     subprocess.run(
         "git commit "
+        "--allow-empty "
         "-m "
         "'[ci skip] move rerender action to branch %s'" % branch,
         shell=True, check=True
