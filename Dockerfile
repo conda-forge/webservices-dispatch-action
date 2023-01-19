@@ -41,7 +41,6 @@ RUN echo "**** install dev packages ****" && \
     mamba install --quiet \
         git \
         python="3.10" \
-        "setuptools<66.0.0a" \
         "conda-smithy>=3.22.0" \
         conda-forge-pinning \
         conda-build \
