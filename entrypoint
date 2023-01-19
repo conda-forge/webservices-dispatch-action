@@ -17,9 +17,12 @@ conda config --set channel_priority strict
 
 conda activate base
 
-mamba update conda-smithy conda-forge-pinning conda-build -y
+mamba update --all
+# mamba update conda-smithy conda-forge-pinning conda-build -y
 
 conda info
+
+conda list
 
 echo " "
 echo "==================================================================================================="
