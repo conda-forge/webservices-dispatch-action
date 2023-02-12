@@ -143,7 +143,7 @@ into your personal GitHub account.
 Hi! This is the friendly automated conda-forge-webservice.
 
 I tried to rerender for you but ran into some issues. Please check the output \
-logs of the latest rerendering GutHub actions workflow run for errors. You can \
+logs of the latest rerendering GitHub actions workflow run for errors. You can \
 also ping conda-forge/core for further assistance or try \
 [re-rendering locally]({doc_url}).
 """
