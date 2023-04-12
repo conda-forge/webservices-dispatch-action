@@ -123,7 +123,7 @@ def main():
                 # update version
                 version_changed, version_error = update_version(git_repo, repo_name)
                 version_push_error = version_comment_and_push_per_changed(
-                    changed=changed,
+                    changed=version_changed,
                     version_error=version_error,
                     git_repo=git_repo,
                     pull=pr,
@@ -148,7 +148,7 @@ def main():
                         git_repo, can_change_workflows
                     )
                     rerender_push_error = rerender_comment_and_push_per_changed(
-                        changed=changed,
+                        changed=rerender_changed,
                         rerender_error=rerender_error,
                         git_repo=git_repo,
                         pull=pr,
