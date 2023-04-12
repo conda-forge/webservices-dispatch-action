@@ -79,6 +79,16 @@ def _change_version(new_version="0.13", branch="main"):
     subprocess.run("git push", shell=True, check=True)
 
 
+def _merge_main_to_branch():
+    print("merging main into branch...", flush=True)
+    subprocess.run("git checkout main", shell=True, check=True)
+    subprocess.run("git pull", shell=True, check=True)
+    subprocess.run(f"git checkout {BRANCH}", shell=True, check=True)
+    subprocess.run("git pull", shell=True, check=True)
+    subprocess.run("git merge --no-edit main", shell=True, check=True)
+    subprocess.run("git push", shell=True, check=True)
+
+
 def _run_test():
     print('sending repo dispatch event to update the version...', flush=True)
     headers = {
@@ -216,8 +226,9 @@ with tempfile.TemporaryDirectory() as tmpdir:
             try:
                 _change_action_branch("dev")
                 _change_version(new_version="0.13", branch="main")
-                _change_version(new_version="0.13", branch=BRANCH)
+                _merge_main_to_branch()
                 _run_test()
             finally:
                 _change_action_branch("main")
                 _change_version(new_version="0.14", branch="main")
+                _merge_main_to_branch()
