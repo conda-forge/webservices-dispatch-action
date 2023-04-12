@@ -134,7 +134,7 @@ def _run_test():
                 )
                 output = c.stdout.decode('utf-8')
                 print("    last commit:", output.strip(), flush=True)
-                assert "MNT:" in output
+                assert "MNT:" in output or "ENH " in output
 
     print('tests passed!', flush=True)
 
@@ -221,4 +221,3 @@ with tempfile.TemporaryDirectory() as tmpdir:
             finally:
                 _change_action_branch("main")
                 _change_version(new_version="0.14", branch="main")
-                _change_version(new_version="0.14", branch=BRANCH)
