@@ -45,12 +45,17 @@ RUN echo "**** install dev packages ****" && \
         conda-forge-pinning \
         conda-build \
         pip \
+        setuptools \
+        setuptools_scm \
         tini \
         pygithub \
         requests \
         gitpython \
         pyyaml && \
     \
+    git clone https://github.com/regro/cf-scripts.git && \
+    mamba env update -n base --file cf-scripts/environment.yml && \
+    cd cf-scripts && pip install --no-build-isolation . && cd .. && \
     echo "**** cleanup ****" && \
     rm -rf /var/cache/apk/* && \
     rm -f miniconda.sh && \

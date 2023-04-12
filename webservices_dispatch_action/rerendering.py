@@ -78,7 +78,7 @@ def _get_run_link(repo_name):
     return f"https://github.com/{repo_name}/actions/runs/{run_id}"
 
 
-def comment_and_push_per_changed(
+def rerender_comment_and_push_per_changed(
     *,
     changed, rerender_error, git_repo, pull, pr_branch, pr_owner, pr_repo,
     repo_name,
