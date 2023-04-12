@@ -49,9 +49,9 @@ def pushd(new_dir):
         os.chdir(previous_dir)
 
 
-def _change_version(new_version="0.13"):
+def _change_version(new_version="0.13", branch="main"):
     print("changing the version to an old one...", flush=True)
-    subprocess.run("git checkout main", shell=True, check=True)
+    subprocess.run(f"git checkout {branch}", shell=True, check=True)
 
     new_lines = []
     with open("recipe/meta.yaml", "r") as fp:
@@ -213,8 +213,10 @@ with tempfile.TemporaryDirectory() as tmpdir:
         with pushd("cf-autotick-bot-test-package-feedstock"):
             try:
                 _change_action_branch("dev")
-                _change_version()
+                _change_version(new_version="0.13", branch="main")
+                _change_version(new_version="0.13", branch=BRANCH)
                 _run_test()
             finally:
                 _change_action_branch("main")
-                _change_version(new_version="0.14")
+                _change_version(new_version="0.14", branch="main")
+                _change_version(new_version="0.14", branch=BRANCH)
