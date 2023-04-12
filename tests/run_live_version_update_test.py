@@ -217,7 +217,7 @@ with tempfile.TemporaryDirectory() as tmpdir:
 
                 print("commiting...", flush=True)
                 subprocess.run(
-                    "git commit "
+                    "git commit --allow-empty "
                     "-m "
                     "'[ci skip] changed version back to test update'",
                     shell=True, check=True
