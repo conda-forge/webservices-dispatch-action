@@ -49,13 +49,15 @@ def pushd(new_dir):
         os.chdir(previous_dir)
 
 
-def _change_version():
+def _change_version(new_version="0.13"):
     print("changing the version to an old one...", flush=True)
+    subprocess.run("git checkout main", shell=True, check=True)
+
     new_lines = []
     with open("recipe/meta.yaml", "r") as fp:
         for line in fp.readlines():
             if line.startswith('{% set version ='):
-                new_lines.append('{% set version = "0.13" %}\n')
+                new_lines.append('{%% set version = "%s" %%}\n' % new_version)
             else:
                 new_lines.append(line)
     with open("recipe/meta.yaml", "w") as fp:
@@ -63,6 +65,16 @@ def _change_version():
 
     print("staging file..", flush=True)
     subprocess.run("git add recipe/meta.yaml", shell=True, check=True)
+    subprocess.run(
+        "git commit "
+        "--allow-empty "
+        "-m "
+        "'[ci skip] moved version to older 0.13'",
+        shell=True, check=True
+    )
+
+    print("push to origin...", flush=True)
+    subprocess.run("git push", shell=True, check=True)
 
 
 def _run_test():
@@ -201,31 +213,8 @@ with tempfile.TemporaryDirectory() as tmpdir:
         with pushd("cf-autotick-bot-test-package-feedstock"):
             try:
                 _change_action_branch("dev")
-
-                print("checkout branch...", flush=True)
-                subprocess.run(
-                    f"git checkout {BRANCH}",
-                    shell=True,
-                    check=True,
-                )
-
-                print("changing version...", flush=True)
                 _change_version()
-
-                print("git status...", flush=True)
-                subprocess.run("git status", shell=True, check=True)
-
-                print("commiting...", flush=True)
-                subprocess.run(
-                    "git commit --allow-empty "
-                    "-m "
-                    "'[ci skip] changed version back to test update'",
-                    shell=True, check=True
-                )
-
-                print("push to origin...", flush=True)
-                subprocess.run("git push", shell=True, check=True)
-
                 _run_test()
             finally:
                 _change_action_branch("main")
+                _change_version(new_version="0.14")
