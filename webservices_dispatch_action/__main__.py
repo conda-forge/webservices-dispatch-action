@@ -92,6 +92,7 @@ def main():
         elif event_data['action'] == 'version_update':
             pr_num = int(event_data['client_payload']['pr'])
             repo_name = event_data['repository']['full_name']
+            input_version = event_data["client_payload"].get("input_version", None)
 
             gh_repo = gh.get_repo(repo_name)
             pr = gh_repo.get_pull(pr_num)
@@ -121,7 +122,9 @@ def main():
                 _, _, can_change_workflows = get_actor_token()
 
                 # update version
-                version_changed, version_error = update_version(git_repo, repo_name)
+                version_changed, version_error = update_version(
+                    git_repo, repo_name, input_version=input_version,
+                )
                 version_push_error = version_comment_and_push_per_changed(
                     changed=version_changed,
                     version_error=version_error,
