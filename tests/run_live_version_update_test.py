@@ -85,7 +85,10 @@ def _merge_main_to_branch():
     subprocess.run("git pull", shell=True, check=True)
     subprocess.run(f"git checkout {BRANCH}", shell=True, check=True)
     subprocess.run("git pull", shell=True, check=True)
-    subprocess.run("git merge --no-edit main", shell=True, check=True)
+    subprocess.run(
+        "git merge --no-edit --strategy-option theirs main",
+        shell=True, check=True,
+    )
     subprocess.run("git push", shell=True, check=True)
 
 
