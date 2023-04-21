@@ -89,8 +89,12 @@ def _merge_main_to_branch():
     subprocess.run("git push", shell=True, check=True)
 
 
-def _run_test():
-    print('sending repo dispatch event to update the version...', flush=True)
+def _run_test(version):
+    print(
+        'sending repo dispatch event to update '
+        'the version w/ version=%r...' % version,
+        flush=True,
+    )
     headers = {
         "authorization": "Bearer %s" % os.environ['GH_TOKEN'],
         'content-type': 'application/json',
@@ -101,7 +105,7 @@ def _run_test():
         data=json.dumps(
             {
                 "event_type": "version_update",
-                "client_payload": {"pr": PR_NUM},
+                "client_payload": {"pr": PR_NUM, "input_version": version},
             }
         ),
         headers=headers,
@@ -197,6 +201,7 @@ parser.add_argument(
     help="build and push the docker image to the dev tag before running the tests",
     action="store_true",
 )
+parser.add_argument('--version', type=str, help="if given, update to this version")
 args = parser.parse_args()
 
 if args.build_and_push:
@@ -227,7 +232,7 @@ with tempfile.TemporaryDirectory() as tmpdir:
                 _change_action_branch("dev")
                 _change_version(new_version="0.13", branch="main")
                 _merge_main_to_branch()
-                _run_test()
+                _run_test(parser.version)
             finally:
                 _change_action_branch("main")
                 _change_version(new_version="0.14", branch="main")
