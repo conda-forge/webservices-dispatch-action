@@ -28,7 +28,7 @@ setup_logger(logging.getLogger("conda_forge_tick"))
 LOGGER = logging.getLogger(__name__)
 
 
-def update_version(git_repo, repo_name):
+def update_version(git_repo, repo_name, input_version=None):
     name = os.path.basename(repo_name).rsplit("-", 1)[0]
     LOGGER.info("using feedstock name %s for repo %s", name, repo_name)
 
@@ -40,38 +40,51 @@ def update_version(git_repo, repo_name):
         LOGGER.exception("error while computing feedstock attributes!")
         return False, True
 
-    try:
-        LOGGER.info("getting latest version")
-        new_version = get_latest_version(
-            name,
-            attrs,
-            (
-                PyPI(),
-                CRAN(),
-                NPM(),
-                ROSDistro(),
-                RawURL(),
-                Github(),
-                IncrementAlphaRawURL(),
-                NVIDIA(),
-            ),
-        )
-        new_version = new_version["new_version"]
-        if new_version:
-            LOGGER.info(
-                "curr version|latest version: %s|%s",
-                attrs.get("version", "0.0.0"),
-                new_version,
+    if input_version is None or input_version == "null":
+        try:
+            LOGGER.info("getting latest version")
+            new_version = get_latest_version(
+                name,
+                attrs,
+                (
+                    PyPI(),
+                    CRAN(),
+                    NPM(),
+                    ROSDistro(),
+                    RawURL(),
+                    Github(),
+                    IncrementAlphaRawURL(),
+                    NVIDIA(),
+                ),
             )
-        else:
-            raise RuntimeError("Could not fetch latest version!")
-    except Exception:
-        LOGGER.exception("error while getting feedstock version!")
-        return False, True
+            new_version = new_version["new_version"]
+            if new_version:
+                LOGGER.info(
+                    "curr version|latest version: %s|%s",
+                    attrs.get("version", "0.0.0"),
+                    new_version,
+                )
+            else:
+                raise RuntimeError("Could not fetch latest version!")
+        except Exception:
+            LOGGER.exception("error while getting feedstock version!")
+            return False, True
+    else:
+        LOGGER.info("using input version")
+        new_version = input_version
+        LOGGER.info(
+            "curr version|input version: %s|%s",
+            attrs.get("version", "0.0.0"),
+            new_version,
+        )
 
+    # if we are finding the version automatically, check that it is going up
     if (
-        VersionOrder(str(new_version).replace("-", "."))
-        <= VersionOrder(str(attrs.get("version", "0.0.0")).replace("-", "."))
+        (input_version is None or input_version == "null")
+        and (
+            VersionOrder(str(new_version).replace("-", "."))
+            <= VersionOrder(str(attrs.get("version", "0.0.0")).replace("-", "."))
+        )
     ):
         LOGGER.info(
             "not updating since new version is less or equal to current version"
