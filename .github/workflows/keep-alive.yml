@@ -2,6 +2,8 @@ name: keep-alive
 on:
   schedule:
     - cron: "0 6 * * SUN"  # Once weekly on Sunday @ 0600 UTC
+permissions:
+  contents: write
 
 jobs:
   keep-alive:
