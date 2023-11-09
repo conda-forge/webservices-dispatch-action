@@ -11,7 +11,7 @@ jobs:
     if: github.repository == 'conda-forge/webservices-dispatch-action'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: gautamkrishnar/keepalive-workflow@1b33e4ef553c59eef0e3450666408021f4b0f456
         with:
           commit_message: "Ah ah ah, stayin' alive"
