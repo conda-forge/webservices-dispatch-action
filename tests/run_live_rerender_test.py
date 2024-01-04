@@ -129,7 +129,7 @@ jobs:
 """ % data)
 
     print("commiting...", flush=True)
-    subprocess.run("git add .github/workflows/webservices.yml", shell=True, check=True)
+    subprocess.run("git add -f .github/workflows/webservices.yml", shell=True, check=True)
     subprocess.run(
         "git commit "
         "--allow-empty "
@@ -197,7 +197,7 @@ with tempfile.TemporaryDirectory() as tmpdir:
                         check=True,
                     )
                     subprocess.run(
-                        "git add .github/workflows/automerge.yml",
+                        "git add -f .github/workflows/automerge.yml",
                         check=True,
                         shell=True,
                     )
@@ -245,7 +245,7 @@ with tempfile.TemporaryDirectory() as tmpdir:
                     fp.write("".join(lines))
 
                 subprocess.run(
-                    "git add .github/workflows/automerge.yml",
+                    "git add -f .github/workflows/automerge.yml",
                     check=True,
                     shell=True,
                 )
