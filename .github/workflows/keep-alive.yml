@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: gautamkrishnar/keepalive-workflow@a7e4440cf77ffd86aa4bd7be97262c226668f8df
+      - uses: gautamkrishnar/keepalive-workflow@306efe4fc63923e36571682b4f4b3e3eee8b6625
         with:
           commit_message: "Ah ah ah, stayin' alive"
           committer_username: conda-forge-bot
