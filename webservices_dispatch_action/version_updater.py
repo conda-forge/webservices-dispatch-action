@@ -6,7 +6,7 @@ import subprocess
 from git import GitCommandError
 from conda.models.version import VersionOrder
 
-from conda_forge_tick.utils import setup_logger
+from conda_forge_tick.utils import setup_logging
 from conda_forge_tick.feedstock_parser import load_feedstock
 from conda_forge_tick.update_upstream_versions import get_latest_version
 
@@ -24,7 +24,7 @@ import conda_forge_tick.update_recipe
 
 from .api_sessions import get_actor_token
 
-setup_logger(logging.getLogger("conda_forge_tick"))
+setup_logging()
 LOGGER = logging.getLogger(__name__)
 
 
