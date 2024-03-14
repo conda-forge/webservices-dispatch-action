@@ -102,6 +102,19 @@ def _run_test():
     print('tests passed!')
 
 
+def _merge_main_to_branch():
+    print("merging main into branch...", flush=True)
+    subprocess.run("git checkout main", shell=True, check=True)
+    subprocess.run("git pull", shell=True, check=True)
+    subprocess.run("git checkout rerender-live-test", shell=True, check=True)
+    subprocess.run("git pull", shell=True, check=True)
+    subprocess.run(
+        "git merge --no-edit --strategy-option theirs main",
+        shell=True, check=True,
+    )
+    subprocess.run("git push", shell=True, check=True)
+
+
 def _change_action_branch(branch):
     print("moving repo to %s action" % branch, flush=True)
     subprocess.run("git checkout main", shell=True, check=True)
@@ -129,7 +142,9 @@ jobs:
 """ % data)
 
     print("commiting...", flush=True)
-    subprocess.run("git add -f .github/workflows/webservices.yml", shell=True, check=True)
+    subprocess.run(
+        "git add -f .github/workflows/webservices.yml", shell=True, check=True
+    )
     subprocess.run(
         "git commit "
         "--allow-empty "
@@ -261,3 +276,5 @@ with tempfile.TemporaryDirectory() as tmpdir:
 
                 print("push to origin...")
                 subprocess.run("git push", shell=True, check=True)
+
+                _merge_main_to_branch()
