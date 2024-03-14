@@ -6,17 +6,17 @@ import tempfile
 
 from git import Repo
 
+import webservices_dispatch_action
 from webservices_dispatch_action.api_sessions import (
     create_api_sessions, get_actor_token
 )
 from webservices_dispatch_action.rerendering import (
     rerender,
-    rerender_comment_and_push_per_changed,
 )
 from webservices_dispatch_action.version_updater import (
     update_version,
-    version_comment_and_push_per_changed
 )
+from webservices_dispatch_action.utils import comment_and_push_if_changed
 
 
 LOGGER = logging.getLogger(__name__)
@@ -27,7 +27,8 @@ def main():
 
     LOGGER.info('making API clients')
 
-    _, gh = create_api_sessions(os.environ["INPUT_GITHUB_TOKEN"])
+    with webservices_dispatch_action.sensitive_env():
+        _, gh = create_api_sessions(os.environ["INPUT_GITHUB_TOKEN"])
 
     with open(os.environ["GITHUB_EVENT_PATH"], 'r') as fp:
         event_data = json.load(fp)
@@ -68,10 +69,12 @@ def main():
 
                 # rerender
                 _, _, can_change_workflows = get_actor_token()
-                changed, rerender_error = rerender(git_repo, can_change_workflows)
+                changed, rerender_error, info_message = rerender(
+                    git_repo, can_change_workflows
+                )
 
                 # comment
-                push_error = rerender_comment_and_push_per_changed(
+                push_error = comment_and_push_if_changed(
                     changed=changed,
                     rerender_error=rerender_error,
                     git_repo=git_repo,
@@ -80,6 +83,12 @@ def main():
                     pr_owner=pr_owner,
                     pr_repo=pr_repo,
                     repo_name=repo_name,
+                    close_pr_if_no_changes_or_errors=False,
+                    help_message=" or you can try [rerendeing locally](%s)" % (
+                        "https://conda-forge.org/docs/maintainer/updating_pkgs.html"
+                        "#rerendering-with-conda-smithy-locally"
+                    ),
+                    info_message=info_message,
                 )
 
                 if rerender_error or push_error:
@@ -98,7 +107,7 @@ def main():
             pr = gh_repo.get_pull(pr_num)
 
             if pr.state == 'closed':
-                raise ValueError("Closed PRs cannot be rerendered!")
+                raise ValueError("Closed PRs cannot have their version updated!")
 
             with tempfile.TemporaryDirectory() as tmpdir:
                 # clone the head repo
@@ -125,15 +134,20 @@ def main():
                 version_changed, version_error = update_version(
                     git_repo, repo_name, input_version=input_version,
                 )
-                version_push_error = version_comment_and_push_per_changed(
+
+                version_push_error = comment_and_push_if_changed(
+                    action='update the version',
                     changed=version_changed,
-                    version_error=version_error,
+                    error=version_error,
                     git_repo=git_repo,
                     pull=pr,
                     pr_branch=pr_branch,
                     pr_owner=pr_owner,
                     pr_repo=pr_repo,
                     repo_name=repo_name,
+                    close_pr_if_no_changes_or_errors=True,
+                    help_message="",
+                    info_message="",
                 )
 
                 if version_error or version_push_error:
@@ -147,18 +161,25 @@ def main():
 
                 if version_changed:
                     # rerender
-                    rerender_changed, rerender_error = rerender(
+                    rerender_changed, rerender_error, info_message = rerender(
                         git_repo, can_change_workflows
                     )
-                    rerender_push_error = rerender_comment_and_push_per_changed(
+                    rerender_push_error = comment_and_push_if_changed(
+                        action='rerender',
                         changed=rerender_changed,
-                        rerender_error=rerender_error,
+                        error=rerender_error,
                         git_repo=git_repo,
                         pull=pr,
                         pr_branch=pr_branch,
                         pr_owner=pr_owner,
                         pr_repo=pr_repo,
                         repo_name=repo_name,
+                        close_pr_if_no_changes_or_errors=False,
+                        help_message=" or you can try [rerendeing locally](%s)" % (
+                            "https://conda-forge.org/docs/maintainer/updating_pkgs.html"
+                            "#rerendering-with-conda-smithy-locally"
+                        ),
+                        info_message=info_message,
                     )
 
                     if rerender_error or rerender_push_error:
