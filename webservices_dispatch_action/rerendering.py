@@ -26,6 +26,33 @@ def rerender(git_repo, can_change_workflows):
         changed, rerender_error = False, False
     else:
         if not can_change_workflows:
+            # warn the user if the workflows changed but we can't push them
+            out = subprocess.run(
+                "git diff --name-only HEAD~1 HEAD",
+                shell=True,
+                capture_output=True,
+            )
+            changed_workflows = any(
+                [
+                    ".github/workflows" in line
+                    for line in out.stdout.decode().splitlines()
+                ] + [
+                    ".github/workflows" in line
+                    for line in out.stderr.decode().splitlines()
+                ])
+
+            if changed_workflows:
+                info_message = (
+                    "Changes from rerendering for the workflow "
+                    "files in '.github/workflows' "
+                    "were not committed because the GitHub Actions token "
+                    "does not have the correct permissions. "
+                    "Please [rerender locally](%s) to update the workflows."
+                ) % (
+                    "https://conda-forge.org/docs/maintainer/updating_pkgs.html"
+                    "#rerendering-with-conda-smithy-locally"
+                )
+
             subprocess.call(
                ["git", "checkout", "HEAD~1", "--", ".github/workflows/*"],
                cwd=git_repo.working_dir,
@@ -33,16 +60,6 @@ def rerender(git_repo, can_change_workflows):
             subprocess.call(
                ["git", "commit", "--amend", "--allow-empty", "--no-edit"],
                cwd=git_repo.working_dir,
-            )
-            info_message = (
-                "Changes from rerendering for the workflow "
-                "files in '.github/workflows' "
-                "were not committed because the GitHub Actions token "
-                "does not have the correct permissions. "
-                "Please [rerender locally](%s) to update the workflows."
-            ) % (
-                "https://conda-forge.org/docs/maintainer/updating_pkgs.html"
-                "#rerendering-with-conda-smithy-locally"
             )
         changed, rerender_error = True, False
 
