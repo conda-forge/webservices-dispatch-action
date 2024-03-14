@@ -76,7 +76,7 @@ def main():
                 # comment
                 push_error = comment_and_push_if_changed(
                     changed=changed,
-                    rerender_error=rerender_error,
+                    error=rerender_error,
                     git_repo=git_repo,
                     pull=pr,
                     pr_branch=pr_branch,
