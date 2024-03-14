@@ -121,3 +121,14 @@ jobs:
         with:
           push: true
           tags: condaforge/webservices-dispatch-action:prod
+
+      - name: Push README to Dockerhub
+        uses: christian-korneck/update-container-description-action@v1
+        env:
+          DOCKER_USER: condaforgebot
+          DOCKER_PASS: ${{ secrets.DH_PASSWORD }}
+        with:
+          destination_container_repo: condaforge/webservices-dispatch-action:prod
+          provider: dockerhub
+          short_description: "conda-forge image used to power the admin webservices GitHub Actions integrations"
+          readme_file: "Dockerfile_README.md"
