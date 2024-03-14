@@ -3,9 +3,6 @@ import logging
 import subprocess
 
 import yaml
-from git import GitCommandError
-
-from .api_sessions import get_actor_token
 
 LOGGER = logging.getLogger(__name__)
 
@@ -13,21 +10,14 @@ LOGGER = logging.getLogger(__name__)
 def rerender(git_repo, can_change_workflows):
     LOGGER.info('rerendering')
 
+    info_message = None
+
     ensure_output_validation_is_on(git_repo)
 
     curr_head = git_repo.active_branch.commit
-    env = dict()
-    for k, v in os.environ.items():
-        if (
-            k not in ["INPUT_GITHUB_TOKEN", "INPUT_RERENDERING_GITHUB_TOKEN"]
-            and "GITHUB_TOKEN" not in k
-        ):
-            env[k] = v
-
     ret = subprocess.call(
         ["conda", "smithy", "rerender", "-c", "auto", "--no-check-uptodate"],
         cwd=git_repo.working_dir,
-        env=env,
     )
 
     if ret:
@@ -36,6 +26,33 @@ def rerender(git_repo, can_change_workflows):
         changed, rerender_error = False, False
     else:
         if not can_change_workflows:
+            # warn the user if the workflows changed but we can't push them
+            out = subprocess.run(
+                "git diff --name-only HEAD~1 HEAD",
+                shell=True,
+                capture_output=True,
+            )
+            changed_workflows = any(
+                [
+                    ".github/workflows" in line
+                    for line in out.stdout.decode().splitlines()
+                ] + [
+                    ".github/workflows" in line
+                    for line in out.stderr.decode().splitlines()
+                ])
+
+            if changed_workflows:
+                info_message = (
+                    "Changes from rerendering for the workflow "
+                    "files in '.github/workflows' "
+                    "were not committed because the GitHub Actions token "
+                    "does not have the correct permissions. "
+                    "Please [rerender locally](%s) to update the workflows."
+                ) % (
+                    "https://conda-forge.org/docs/maintainer/updating_pkgs.html"
+                    "#rerendering-with-conda-smithy-locally"
+                )
+
             subprocess.call(
                ["git", "checkout", "HEAD~1", "--", ".github/workflows/*"],
                cwd=git_repo.working_dir,
@@ -46,7 +63,7 @@ def rerender(git_repo, can_change_workflows):
             )
         changed, rerender_error = True, False
 
-    return changed, rerender_error
+    return changed, rerender_error, info_message
 
 
 def ensure_output_validation_is_on(git_repo):
@@ -67,100 +84,8 @@ def ensure_output_validation_is_on(git_repo):
             "git add conda-forge.yml",
             shell=True,
             cwd=git_repo.working_dir,
+            env=os.environ,
         )
         return True
     else:
         return False
-
-
-def _get_run_link(repo_name):
-    run_id = os.environ["GITHUB_RUN_ID"]
-    return f"https://github.com/{repo_name}/actions/runs/{run_id}"
-
-
-def rerender_comment_and_push_per_changed(
-    *,
-    changed, rerender_error, git_repo, pull, pr_branch, pr_owner, pr_repo,
-    repo_name,
-):
-    actor, token, can_change_workflows = get_actor_token()
-    LOGGER.info(
-        'token can change workflows: %s', can_change_workflows,
-    )
-
-    LOGGER.info(
-        'pushing and commenting: branch|owner|repo = %s|%s|%s',
-        pr_branch,
-        pr_owner,
-        pr_repo,
-    )
-
-    run_link = _get_run_link(repo_name)
-
-    push_error = False
-    message = None
-    if changed:
-        try:
-            git_repo.remotes.origin.set_url(
-                "https://%s:%s@github.com/%s/%s.git" % (
-                    actor,
-                    token,
-                    pr_owner,
-                    pr_repo,
-                ),
-                push=True,
-            )
-            git_repo.remotes.origin.push()
-        except GitCommandError as e:
-            push_error = True
-            LOGGER.critical(repr(e))
-            message = """\
-Hi! This is the friendly automated conda-forge-webservice.
-
-I tried to rerender for you, but it looks like I wasn't able to push to the {} \
-branch of {}/{}. Did you check the "Allow edits from maintainers" box?
-
-**NOTE**: PRs from organization accounts or PRs from forks made from \
-organization forks cannot be rerendered because of GitHub \
-permissions. Please fork the feedstock directly from conda-forge \
-into your personal GitHub account.
-""".format(pr_branch, pr_owner, pr_repo)
-        finally:
-            git_repo.remotes.origin.set_url(
-                "https://github.com/%s/%s.git" % (
-                    pr_owner,
-                    pr_repo,
-                ),
-                push=True,
-            )
-    else:
-        if rerender_error:
-            doc_url = (
-                "https://conda-forge.org/docs/maintainer/updating_pkgs.html"
-                "#rerendering-with-conda-smithy-locally"
-            )
-            message = f"""\
-Hi! This is the friendly automated conda-forge-webservice.
-
-I tried to rerender for you but ran into some issues. Please check the output \
-logs of the latest rerendering GitHub actions workflow run for errors. You can \
-also ping conda-forge/core for further assistance or try \
-[re-rendering locally]({doc_url}).
-"""
-        else:
-            message = """\
-Hi! This is the friendly automated conda-forge-webservice.
-
-I tried to rerender for you, but it looks like there was nothing to do.
-"""
-
-    if message is not None:
-        if run_link is not None:
-            message += (
-                "\nThis message was generated by "
-                f"GitHub actions workflow run [{run_link}]({run_link}).\n"
-            )
-
-        pull.create_issue_comment(message)
-
-    return push_error
