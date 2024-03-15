@@ -21,32 +21,19 @@ jobs:
 
       - uses: conda-incubator/setup-miniconda@v3
         with:
-          python-version: "3.10"
+          python-version: "3.11"
           channels: conda-forge,defaults
           channel-priority: strict
           show-channel-urls: true
           miniforge-version: latest
           miniforge-variant: Mambaforge
+          environment-file: environment.yml
 
       - name: configure conda and install code
         shell: bash -l {0}
         run: |
           conda info -a
-
-          mamba install \
-              git \
-              python="3.10" \
-              pip \
-              tini \
-              pygithub \
-              gitpython \
-              requests \
-              flake8 \
-              pytest \
-              conda-smithy \
-              conda-forge-pinning \
-              conda-build
-
+          mamba install --yes pytest flake8
           pip install --no-deps -e .
 
       - name: lint and run tests
@@ -56,11 +43,6 @@ jobs:
           pytest -vv webservices_dispatch_action
           command -v run-webservices-dispatch-action
 
-      # - name: build the docker image
-      #   shell: bash -l {0}
-      #   run: |
-      #     docker build -t test .
-      #
       - name: generate token
         id: generate_token
         uses: conda-forge/github-app-token@e3ab451d57e120b956292a1fa1d21fe4ba171c36

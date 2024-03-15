@@ -3,7 +3,7 @@ channels:
 - conda-forge
 dependencies:
  - git
- - python=3.11
+ - python
  - conda-smithy>=3.22.0
  - conda-forge-pinning
  - conda-build
