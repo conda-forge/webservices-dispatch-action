@@ -10,7 +10,7 @@ COPY environment.yml /tmp/environment.yml
 
 RUN echo "**** install base env ****" && \
     micromamba install --yes --quiet --name base -c conda-forge git && \
-    git clone https://github.com/regro/cf-scripts.git && \
+    /opt/conda/bin/git clone https://github.com/regro/cf-scripts.git && \
     micromamba install --yes --quiet --name base --file cf-scripts/environment.yml && \
     micromamba install --yes --quiet --name base --file /tmp/environment.yml
 
