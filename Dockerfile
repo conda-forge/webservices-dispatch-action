@@ -1,4 +1,28 @@
-FROM frolvlad/alpine-glibc:alpine-3.10
+FROM mambaorg/micromamba:git-0f27156 AS build-env
+
+ENV PYTHONDONTWRITEBYTECODE=1
+USER root
+
+# make sure the install below is not cached by docker
+ADD https://loripsum.net/api /opt/docker/etc/gibberish-to-bust-docker-image-cache
+
+COPY environment.yml /tmp/environment.yml
+
+RUN echo "**** install base env ****" && \
+    micromamba install --yes --quiet --name base --file /tmp/environment.yml \
+    git clone https://github.com/regro/cf-scripts.git && \
+    micromamba install --yes --quiet --name base --file cf-scripts/environment.yml
+
+RUN echo "**** cleanup ****" && \
+    micromamba clean --all --force-pkgs-dirs --yes && \
+    find "${MAMBA_ROOT_PREFIX}" -follow -type f \( -iname '*.a' -o -iname '*.pyc' -o -iname '*.js.map' \) -delete
+RUN echo "**** finalize ****" && \
+    mkdir -p "${MAMBA_ROOT_PREFIX}/locks" && \
+    chmod 777 "${MAMBA_ROOT_PREFIX}/locks"
+
+FROM frolvlad/alpine-glibc:alpine-3.16_glibc-2.34
+
+COPY --from=build-env /opt/conda /opt/conda
 
 # much of image code ripped from
 # https://github.com/Docker-Hub-frolvlad/docker-alpine-miniconda3
@@ -8,63 +32,10 @@ LABEL maintainer="conda-forge (@conda-forge/core)"
 
 ENV LANG en_US.UTF-8
 
-ARG CONDA_MD5="678c0078e3a37596cd671f690e852fff"
 ARG CONDA_DIR="/opt/conda"
 
 ENV PATH="$CONDA_DIR/bin:$PATH"
 ENV PYTHONDONTWRITEBYTECODE=1
-
-# make sure the install below is not cached by docker
-ADD https://loripsum.net/api /opt/docker/etc/gibberish
-
-# Install conda
-RUN echo "**** install dev packages ****" && \
-    apk add --no-cache bash ca-certificates wget && \
-    \
-    echo "**** get Miniconda ****" && \
-    mkdir -p "$CONDA_DIR" && \
-    wget "https://github.com/conda-forge/miniforge/releases/download/4.11.0-0/Mambaforge-4.11.0-0-Linux-x86_64.sh" -O miniconda.sh && \
-    echo "$CONDA_MD5  miniconda.sh" | md5sum -c && \
-    \
-    echo "**** install Miniconda ****" && \
-    bash miniconda.sh -f -b -p "$CONDA_DIR" && \
-    \
-    echo "**** install base env ****" && \
-    source /opt/conda/etc/profile.d/conda.sh && \
-    conda activate base && \
-    conda config --set show_channel_urls True  && \
-    conda config --add channels conda-forge  && \
-    conda config --show-sources  && \
-    conda config --set always_yes yes && \
-    conda config --set channel_priority strict && \
-    mamba update --all && \
-    mamba install --quiet \
-        git \
-        python="3.10" \
-        "conda-smithy>=3.22.0" \
-        conda-forge-pinning \
-        conda-build \
-        pip \
-        setuptools \
-        setuptools_scm \
-        tini \
-        pygithub \
-        requests \
-        gitpython \
-        pyyaml && \
-    \
-    git clone https://github.com/regro/cf-scripts.git && \
-    mamba env update -n base --file cf-scripts/environment.yml && \
-    cd cf-scripts && pip install --no-build-isolation . && cd .. && \
-    echo "**** cleanup ****" && \
-    rm -rf /var/cache/apk/* && \
-    rm -f miniconda.sh && \
-    conda clean --all --force-pkgs-dirs --yes && \
-    find "$CONDA_DIR" -follow -type f \( -iname '*.a' -o -iname '*.pyc' -o -iname '*.js.map' \) -delete && \
-    \
-    echo "**** finalize ****" && \
-    mkdir -p "$CONDA_DIR/locks" && \
-    chmod 777 "$CONDA_DIR/locks"
 
 COPY entrypoint /opt/docker/bin/entrypoint
 RUN mkdir -p webservices_dispatch_action
@@ -72,7 +43,12 @@ COPY / webservices_dispatch_action/
 RUN cd webservices_dispatch_action && \
     source /opt/conda/etc/profile.d/conda.sh && \
     conda activate base && \
-    pip install -e .
+    pip install --no-build-isolation -e .
+RUN git clone https://github.com/regro/cf-scripts.git && \
+    cd cf-scripts && \
+    source /opt/conda/etc/profile.d/conda.sh && \
+    conda activate base && \
+    pip install --no-build-isolation -e .
 
 ENTRYPOINT ["/opt/conda/bin/tini", "--", "/opt/docker/bin/entrypoint"]
 CMD ["/bin/bash"]

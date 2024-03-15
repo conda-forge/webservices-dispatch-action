@@ -1,0 +1,17 @@
+name: base
+channels:
+- conda-forge
+dependencies:
+ - git
+ - python=3.11
+ - conda-smithy>=3.22.0
+ - conda-forge-pinning
+ - conda-build
+ - pip
+ - setuptools
+ - setuptools_scm
+ - tini
+ - pygithub
+ - requests
+ - gitpython
+ - pyyaml

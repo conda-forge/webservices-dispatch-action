@@ -8,21 +8,12 @@ git config --global user.name "conda-forge-webservices[bot]"
 git config --global user.email "91080706+conda-forge-webservices[bot]@users.noreply.github.com"
 
 source /opt/conda/etc/profile.d/conda.sh
+micromamba activate base
 
-conda config --set show_channel_urls True
-conda config --add channels conda-forge
-conda config --show-sources
-conda config --set always_yes yes
-conda config --set channel_priority strict
+micromamba update --all --yes
 
-conda activate base
-
-mamba update --all
-# mamba update conda-smithy conda-forge-pinning conda-build -y
-
-conda info
-
-conda list
+micromamba info
+micromamba list
 
 echo " "
 echo "==================================================================================================="
