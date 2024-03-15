@@ -40,10 +40,6 @@ ARG CONDA_DIR="/opt/conda"
 ENV PATH="$CONDA_DIR/bin:$PATH"
 ENV PYTHONDONTWRITEBYTECODE=1
 
-# RUN apk add --no-cache bash binutils && \
-#     rm -rf /var/cache/apk/*
-# SHELL ["/bin/bash", "-c"]
-
 COPY entrypoint /opt/docker/bin/entrypoint
 RUN mkdir -p webservices_dispatch_action
 COPY / webservices_dispatch_action/
