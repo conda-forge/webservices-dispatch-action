@@ -9,6 +9,9 @@ on:
      - cron: "0 6 * * SUN"  # Once weekly on Sunday @ 0600 UTC
   workflow_dispatch: null
 
+concurrency:
+  group: ${{ github.workflow }}
+
 jobs:
   tests:
     name: tests
