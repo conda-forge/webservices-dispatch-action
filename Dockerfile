@@ -27,8 +27,6 @@ FROM frolvlad/alpine-glibc:alpine-3.16_glibc-2.34
 
 COPY --from=build-env /opt/conda /opt/conda
 
-# much of image code ripped from
-# https://github.com/Docker-Hub-frolvlad/docker-alpine-miniconda3
 COPY BASE_IMAGE_LICENSE /
 
 LABEL maintainer="conda-forge (@conda-forge/core)"
