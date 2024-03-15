@@ -7,6 +7,8 @@ setup(
     entry_points={
         'console_scripts': [
             'run-webservices-dispatch-action=webservices_dispatch_action.__main__:main',
+            'run-webservices-dispatch-action-version-updater'
+            '=webservices_dispatch_action.version_updater:main',
         ],
     },
 )

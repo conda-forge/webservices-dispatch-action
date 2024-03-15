@@ -2,7 +2,10 @@ import os
 import logging
 import pprint
 import subprocess
+import click
+import sys
 
+from git import Repo
 from conda.models.version import VersionOrder
 
 from conda_forge_tick.utils import setup_logging
@@ -129,3 +132,58 @@ def update_version(git_repo, repo_name, input_version=None):
         return False, True
 
     return True, False
+
+
+@click.command()
+@click.option(
+    "--repo-url",
+    required=True,
+    type=str,
+    help="The URL of the repository to update",
+)
+@click.option(
+    "--pr-branch",
+    required=True,
+    type=str,
+    help="The branch of the pull request",
+)
+@click.option(
+    "-feedstock-dir",
+    required=True,
+    type=str,
+    help="The directory of the feedstock",
+)
+@click.option(
+    "--repo-name",
+    required=True,
+    type=str,
+    help="The name of the repository",
+)
+@click.option(
+    "--input-version",
+    required=False,
+    type=str,
+    default=None,
+    help="The version to update to",
+)
+def main(
+    repo_url,
+    pr_branch,
+    feedstock_dir,
+    repo_name,
+    input_version=None,
+):
+    git_repo = Repo.clone_from(
+        repo_url,
+        feedstock_dir,
+        branch=pr_branch,
+    )
+
+    _, version_error = update_version(
+        git_repo, repo_name, input_version=input_version,
+    )
+
+    if version_error:
+        sys.exit(1)
+    else:
+        sys.exit(0)

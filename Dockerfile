@@ -48,6 +48,7 @@ RUN echo "**** install dev packages ****" && \
         setuptools \
         setuptools_scm \
         tini \
+        click \
         pygithub \
         requests \
         gitpython \

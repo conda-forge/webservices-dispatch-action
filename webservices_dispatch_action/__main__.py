@@ -3,6 +3,7 @@ import json
 import logging
 import pprint
 import tempfile
+import subprocess
 
 from git import Repo
 
@@ -12,9 +13,6 @@ from webservices_dispatch_action.api_sessions import (
 )
 from webservices_dispatch_action.rerendering import (
     rerender,
-)
-from webservices_dispatch_action.version_updater import (
-    update_version,
 )
 from webservices_dispatch_action.utils import comment_and_push_if_changed
 
@@ -132,9 +130,30 @@ def main():
                 _, _, can_change_workflows = get_actor_token()
 
                 # update version
-                version_changed, version_error = update_version(
-                    git_repo, repo_name, input_version=input_version,
+                curr_head = git_repo.active_branch.commit
+                cmd = (
+                    f"run-webservices-dispatch-action-version-updater "
+                    f"--repo-url {repo_url} "
+                    f"--pr-branch {pr_branch} "
+                    f"--feedstock-dir {feedstock_dir}"
+                    f"--repo-name {repo_name}"
                 )
+                if input_version:
+                    cmd += f" --input-version {input_version}"
+                ret = subprocess.run(
+                    cmd,
+                    shell=True,
+                    env=os.environ,
+                )
+                if ret.returncode != 0:
+                    version_error = True
+                    version_changed = False
+                elif git_repo.active_branch.commit == curr_head:
+                    version_error = False
+                    version_changed = False
+                else:
+                    version_error = False
+                    version_changed = True
 
                 version_push_error = comment_and_push_if_changed(
                     action='update the version',
