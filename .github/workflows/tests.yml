@@ -75,7 +75,7 @@ jobs:
           python tests/run_live_rerender_test.py --build-and-push
         env:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-          DH_PASSWORD: ${{ secrets.DH_PASSWORD }}
+          DH_PASSWORD: ${{ secrets.CF_BOT_DH_PASSWORD }}
 
       - name: run live version update tests
         shell: bash -l {0}
@@ -87,7 +87,7 @@ jobs:
           python tests/run_live_version_update_test.py
         env:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-          DH_PASSWORD: ${{ secrets.DH_PASSWORD }}
+          DH_PASSWORD: ${{ secrets.CF_BOT_DH_PASSWORD }}
 
       - name: run live version update tests w/ user version
         shell: bash -l {0}
@@ -99,7 +99,7 @@ jobs:
           python tests/run_live_version_update_test.py --version=0.14
         env:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-          DH_PASSWORD: ${{ secrets.DH_PASSWORD }}
+          DH_PASSWORD: ${{ secrets.CF_BOT_DH_PASSWORD }}
 
   docker-push:
     name: docker-push
@@ -116,7 +116,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: condaforgebot
-          password: ${{ secrets.DH_PASSWORD }}
+          password: ${{ secrets.CF_BOT_DH_PASSWORD }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -128,7 +128,7 @@ jobs:
         uses: christian-korneck/update-container-description-action@v1
         env:
           DOCKER_USER: condaforgebot
-          DOCKER_PASS: ${{ secrets.DH_PASSWORD }}
+          DOCKER_PASS: ${{ secrets.CF_BOT_DH_PASSWORD }}
         with:
           destination_container_repo: condaforge/webservices-dispatch-action:prod
           provider: dockerhub
