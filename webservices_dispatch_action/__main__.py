@@ -140,6 +140,7 @@ def main():
                 )
                 if input_version:
                     cmd += f" --input-version {input_version}"
+                LOGGER.info(f"Running command {cmd}")
                 ret = subprocess.run(
                     cmd,
                     shell=True,
