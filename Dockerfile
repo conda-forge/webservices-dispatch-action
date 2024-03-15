@@ -39,7 +39,6 @@ ENV PATH="$CONDA_DIR/bin:$PATH"
 ENV PYTHONDONTWRITEBYTECODE=1
 
 COPY entrypoint /opt/docker/bin/entrypoint
-
 RUN mkdir -p webservices_dispatch_action
 COPY / webservices_dispatch_action/
 RUN source /opt/conda/etc/profile.d/conda.sh && \
