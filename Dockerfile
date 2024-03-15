@@ -9,8 +9,10 @@ ADD https://loripsum.net/api /opt/docker/etc/gibberish-to-bust-docker-image-cach
 COPY environment.yml /tmp/environment.yml
 
 RUN echo "**** install base env ****" && \
-    micromamba install --yes --quiet --name base -c conda-forge git && \
-    /opt/conda/bin/git clone https://github.com/regro/cf-scripts.git && \
+    micromamba install --yes --quiet --name base -c conda-forge git conda python=3.11 && \
+    source /opt/conda/etc/profile.d/conda.sh && \
+    conda activate base && \
+    git clone https://github.com/regro/cf-scripts.git && \
     micromamba install --yes --quiet --name base --file cf-scripts/environment.yml && \
     micromamba install --yes --quiet --name base --file /tmp/environment.yml
 
@@ -38,18 +40,20 @@ ARG CONDA_DIR="/opt/conda"
 ENV PATH="$CONDA_DIR/bin:$PATH"
 ENV PYTHONDONTWRITEBYTECODE=1
 
+# RUN apk add --no-cache bash binutils && \
+#     rm -rf /var/cache/apk/*
+# SHELL ["/bin/bash", "-c"]
+
 COPY entrypoint /opt/docker/bin/entrypoint
 RUN mkdir -p webservices_dispatch_action
 COPY / webservices_dispatch_action/
-RUN cd webservices_dispatch_action && \
-    source /opt/conda/etc/profile.d/conda.sh && \
+RUN source /opt/conda/etc/profile.d/conda.sh && \
+    cd webservices_dispatch_action && \
     conda activate base && \
-    pip install --no-build-isolation -e .
-RUN git clone https://github.com/regro/cf-scripts.git && \
+    pip install --no-build-isolation -e . && \
+    git clone https://github.com/regro/cf-scripts.git && \
     cd cf-scripts && \
-    source /opt/conda/etc/profile.d/conda.sh && \
-    conda activate base && \
     pip install --no-build-isolation -e .
 
 ENTRYPOINT ["/opt/conda/bin/tini", "--", "/opt/docker/bin/entrypoint"]
-CMD ["/bin/bash"]
+
