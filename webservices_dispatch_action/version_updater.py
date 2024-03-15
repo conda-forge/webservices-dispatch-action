@@ -148,7 +148,7 @@ def update_version(git_repo, repo_name, input_version=None):
     help="The branch of the pull request",
 )
 @click.option(
-    "-feedstock-dir",
+    "--feedstock-dir",
     required=True,
     type=str,
     help="The directory of the feedstock",
