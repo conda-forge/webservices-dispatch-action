@@ -211,10 +211,12 @@ if args.build_and_push:
     subprocess.run(
         "docker build -t condaforge/webservices-dispatch-action:dev .",
         shell=True,
+        check=True,
     )
     subprocess.run(
         "docker push condaforge/webservices-dispatch-action:dev",
         shell=True,
+        check=True,
     )
 
 

@@ -1,27 +1,19 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 echo " "
 echo "==================================================================================================="
 echo "==================================================================================================="
 
+source /opt/conda/etc/profile.d/conda.sh
+
 git config --global user.name "conda-forge-webservices[bot]"
 git config --global user.email "91080706+conda-forge-webservices[bot]@users.noreply.github.com"
 
-source /opt/conda/etc/profile.d/conda.sh
-
-conda config --set show_channel_urls True
-conda config --add channels conda-forge
-conda config --show-sources
-conda config --set always_yes yes
-conda config --set channel_priority strict
-
 conda activate base
 
-mamba update --all
-# mamba update conda-smithy conda-forge-pinning conda-build -y
+conda update --all --yes
 
 conda info
-
 conda list
 
 echo " "
