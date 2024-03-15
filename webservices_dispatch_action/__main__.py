@@ -133,8 +133,6 @@ def main():
                 curr_head = git_repo.active_branch.commit
                 cmd = (
                     f"run-webservices-dispatch-action-version-updater "
-                    f"--repo-url {repo_url} "
-                    f"--pr-branch {pr_branch} "
                     f"--feedstock-dir {feedstock_dir} "
                     f"--repo-name {repo_name}"
                 )

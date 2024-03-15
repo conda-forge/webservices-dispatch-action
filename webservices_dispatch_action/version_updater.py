@@ -136,18 +136,6 @@ def update_version(git_repo, repo_name, input_version=None):
 
 @click.command()
 @click.option(
-    "--repo-url",
-    required=True,
-    type=str,
-    help="The URL of the repository to update",
-)
-@click.option(
-    "--pr-branch",
-    required=True,
-    type=str,
-    help="The branch of the pull request",
-)
-@click.option(
     "--feedstock-dir",
     required=True,
     type=str,
@@ -167,17 +155,11 @@ def update_version(git_repo, repo_name, input_version=None):
     help="The version to update to",
 )
 def main(
-    repo_url,
-    pr_branch,
     feedstock_dir,
     repo_name,
     input_version=None,
 ):
-    git_repo = Repo.clone_from(
-        repo_url,
-        feedstock_dir,
-        branch=pr_branch,
-    )
+    git_repo = Repo(feedstock_dir)
 
     _, version_error = update_version(
         git_repo, repo_name, input_version=input_version,
