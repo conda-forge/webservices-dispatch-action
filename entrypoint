@@ -10,6 +10,8 @@ git config --global user.name "conda-forge-webservices[bot]"
 git config --global user.email "91080706+conda-forge-webservices[bot]@users.noreply.github.com"
 
 conda activate base
+conda config --add channels conda-forge
+conda config --set channel_priority strict
 
 conda update --all --yes
 
