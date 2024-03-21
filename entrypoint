@@ -12,6 +12,7 @@ git config --global user.email "91080706+conda-forge-webservices[bot]@users.nore
 conda activate base
 conda config --set show_channel_urls True
 conda config --add channels conda-forge
+conda config --remove channels defaults || true
 conda config --show-sources
 conda config --set always_yes yes
 conda config --set channel_priority strict
