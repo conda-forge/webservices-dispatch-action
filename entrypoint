@@ -13,9 +13,10 @@ conda activate base
 conda config --set show_channel_urls True
 conda config --add channels conda-forge
 conda config --remove channels defaults || true
-conda config --show-sources
-conda config --set always_yes yes
 conda config --set channel_priority strict
+conda config --set always_yes yes
+
+conda config --show-sources
 
 conda update --all --yes
 
