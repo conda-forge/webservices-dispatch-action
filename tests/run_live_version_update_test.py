@@ -237,8 +237,10 @@ with tempfile.TemporaryDirectory() as tmpdir:
                 _change_action_branch("dev")
                 _change_version(new_version="0.13", branch="main")
                 _merge_main_to_branch()
+                _change_version(new_version="0.13", branch=BRANCH)
                 _run_test(args.version)
             finally:
                 _change_action_branch("main")
                 _change_version(new_version="0.14", branch="main")
                 _merge_main_to_branch()
+                _change_version(new_version="0.13", branch=BRANCH)
