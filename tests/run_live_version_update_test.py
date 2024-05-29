@@ -50,6 +50,9 @@ def pushd(new_dir):
 
 
 def _change_version(new_version="0.13", branch="main"):
+    import random
+    new_sha = "".join(random.choices("0123456789abcdef", k=64))
+
     print("changing the version to an old one...", flush=True)
     subprocess.run(f"git checkout {branch}", shell=True, check=True)
 
@@ -59,7 +62,7 @@ def _change_version(new_version="0.13", branch="main"):
             if line.startswith('{% set version ='):
                 new_lines.append('{%% set version = "%s" %%}\n' % new_version)
             elif line.startswith("  sha256: "):
-                new_lines.append("  sha256: blah\n")
+                new_lines.append("  sha256: %s\n" % new_sha)
             else:
                 new_lines.append(line)
     with open("recipe/meta.yaml", "w") as fp:
