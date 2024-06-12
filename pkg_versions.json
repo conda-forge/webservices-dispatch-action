@@ -1,6 +1,6 @@
 {
   "anaconda-client": "1.12.3",
-  "conda-smithy": "3.36.1",
+  "conda-smithy": "3.36.2",
   "conda": "24.5.0",
   "conda-build": "24.5.1",
   "conda-libmamba-solver": "24.1.0",
