@@ -154,6 +154,7 @@ jobs:
     )
 
     print("push to origin...", flush=True)
+    subprocess.run("git pull", shell=True, check=True)
     subprocess.run("git push", shell=True, check=True)
 
 
