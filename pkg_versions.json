@@ -3,6 +3,6 @@
   "conda-smithy": "3.37.1",
   "conda": "24.5.0",
   "conda-build": "24.5.1",
-  "conda-libmamba-solver": "24.1.0",
+  "conda-libmamba-solver": "24.7.0",
   "mamba": "1.5.8"
 }
