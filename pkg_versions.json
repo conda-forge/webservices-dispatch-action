@@ -1,9 +1,9 @@
 {
   "anaconda-client": "1.12.3",
-  "conda-smithy": "3.37.1",
+  "conda-smithy": "3.37.2",
   "conda": "24.7.1",
   "conda-build": "24.7.1",
   "conda-libmamba-solver": "24.7.0",
   "mamba": "1.5.8",
-  "conda-forge-webservices-update-timestamp": "2024-08-01T01:30:45.485604+00:00"
+  "conda-forge-webservices-update-timestamp": "2024-08-01T06:03:20.914422+00:00"
 }
