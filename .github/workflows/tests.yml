@@ -96,16 +96,16 @@ jobs:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@d70bba72b1f3fd22344832f00baa16ece964efeb # v3
+        uses: docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db # v3
 
       - name: Login to Docker Hub
-        uses: docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446 # v3
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3
         with:
           username: condaforgebot
           password: ${{ secrets.CF_BOT_DH_PASSWORD }}
 
       - name: Build and push
-        uses: docker/build-push-action@15560696de535e4014efeff63c48f16952e52dd1 # v5
+        uses: docker/build-push-action@5176d81f87c23d6fc96624dfdbcd9f3830bbe445 # v5
         with:
           push: true
           tags: condaforge/webservices-dispatch-action:prod
@@ -129,4 +129,4 @@ jobs:
       actions: write
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
-      - uses: gautamkrishnar/keepalive-workflow@05456e7809058d586d96392e99217726ccc10076 # 2.0.5
+      - uses: gautamkrishnar/keepalive-workflow@24ba73b43d5ea8d2b3d56fb9b8de951ba9a3dd18 # 2.0.6
