@@ -1,7 +1,8 @@
-import os
 import logging
+import os
 
 from git import GitCommandError
+
 from .api_sessions import get_actor_token
 
 LOGGER = logging.getLogger(__name__)

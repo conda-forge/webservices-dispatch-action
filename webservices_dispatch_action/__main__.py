@@ -1,9 +1,9 @@
-import os
 import json
 import logging
+import os
 import pprint
-import tempfile
 import subprocess
+import tempfile
 
 from git import Repo
 
@@ -16,7 +16,6 @@ from webservices_dispatch_action.rerendering import (
     rerender,
 )
 from webservices_dispatch_action.utils import comment_and_push_if_changed
-
 
 LOGGER = logging.getLogger(__name__)
 

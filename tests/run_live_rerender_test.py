@@ -27,15 +27,16 @@ Then you can execute this script and it will report the results.
 
 """
 
-import os
-import json
-import time
-import tempfile
-import requests
-import contextlib
-import subprocess
 import argparse
+import contextlib
 import glob
+import json
+import os
+import subprocess
+import tempfile
+import time
+
+import requests
 
 
 @contextlib.contextmanager

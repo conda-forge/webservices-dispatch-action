@@ -1,8 +1,8 @@
-import time
 import os
+import time
+
 import requests
 import urllib3.util.retry
-
 from github import Github
 
 from . import sensitive_env
