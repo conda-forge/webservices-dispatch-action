@@ -1,53 +1,30 @@
-FROM mambaorg/micromamba:git-0f27156 AS build-env
-
-ENV PYTHONDONTWRITEBYTECODE=1
+FROM ghcr.io/prefix-dev/pixi:0.26.1 AS build
 USER root
 
 # make sure the install below is not cached by docker
-ADD https://loripsum.net/api /opt/docker/etc/gibberish-to-bust-docker-image-cache
+COPY . /app
 
-COPY environment.yml /tmp/environment.yml
+RUN pixi run install
 
-RUN echo "**** install base env ****" && \
-    micromamba install --yes --quiet --name base -c conda-forge git conda python=3.11 && \
-    source /opt/conda/etc/profile.d/conda.sh && \
-    conda activate base && \
-    git clone https://github.com/regro/cf-scripts.git && \
-    micromamba install --yes --quiet --name base --file cf-scripts/environment.yml && \
-    micromamba install --yes --quiet --name base --file /tmp/environment.yml
+# Create the shell-hook bash script to activate the environment
+RUN pixi shell-hook -e default > /shell-hook.sh
 
-RUN echo "**** cleanup ****" && \
-    micromamba clean --all --force-pkgs-dirs --yes && \
-    find "${MAMBA_ROOT_PREFIX}" -follow -type f \( -iname '*.a' -o -iname '*.pyc' -o -iname '*.js.map' \) -delete
-RUN echo "**** finalize ****" && \
-    mkdir -p "${MAMBA_ROOT_PREFIX}/locks" && \
-    chmod 777 "${MAMBA_ROOT_PREFIX}/locks"
+FROM ubuntu:22.04 AS production
 
-FROM frolvlad/alpine-glibc:alpine-3.16_glibc-2.34
+# only copy the production environment into prod container
+# please note that the "prefix" (path) needs to stay the same as in the build container
+COPY --from=build /app/.pixi/envs/default /app/.pixi/envs/default
+COPY --from=build /shell-hook.sh /shell-hook.sh
 
-COPY --from=build-env /opt/conda /opt/conda
-
-COPY BASE_IMAGE_LICENSE /
+WORKDIR /app
+EXPOSE 8000
 
 LABEL maintainer="conda-forge (@conda-forge/core)"
 
 ENV LANG en_US.UTF-8
 
-ARG CONDA_DIR="/opt/conda"
-
-ENV PATH="$CONDA_DIR/bin:$PATH"
-ENV PYTHONDONTWRITEBYTECODE=1
-
 COPY entrypoint /opt/docker/bin/entrypoint
 RUN mkdir -p webservices_dispatch_action
-COPY / webservices_dispatch_action/
-RUN source /opt/conda/etc/profile.d/conda.sh && \
-    cd webservices_dispatch_action && \
-    conda activate base && \
-    pip install --no-build-isolation -e . && \
-    git clone https://github.com/regro/cf-scripts.git && \
-    cd cf-scripts && \
-    pip install --no-build-isolation -e .
 
 ENTRYPOINT ["/opt/conda/bin/tini", "--", "/opt/docker/bin/entrypoint"]
 

@@ -23,5 +23,9 @@ gitpython = "*"
 pyyaml = "*"
 pre-commit = "*"
 
+[pypi-dependencies]
+webservices_dispatch_action = { path = ".", editable = true }
+conda-forge-tick = { git = "https://github.com/regro/cf-scripts.git" }
+
 [target.linux.dependencies]
 tini = "*"
