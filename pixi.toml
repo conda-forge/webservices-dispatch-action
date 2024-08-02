@@ -1,0 +1,27 @@
+[project]
+name = "base"
+version = "0.1.0"
+description = "Add a short description here"
+authors = ["Wolf Vollprecht <w.vollprecht@gmail.com>"]
+channels = ["conda-forge"]
+platforms = ["osx-64", "osx-arm64", "linux-64", "win-64"]
+
+[tasks]
+lint = "pre-commit run --all"
+
+[dependencies]
+git = "*"
+conda-smithy = ">=3.22.0"
+conda-forge-pinning = "*"
+conda-build = "*"
+pip = "*"
+setuptools = "*"
+setuptools_scm = "*"
+pygithub = "*"
+requests = "*"
+gitpython = "*"
+pyyaml = "*"
+pre-commit = "*"
+
+[target.linux.dependencies]
+tini = "*"
