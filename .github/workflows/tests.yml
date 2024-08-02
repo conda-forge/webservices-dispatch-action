@@ -39,7 +39,7 @@ jobs:
       - name: lint and run tests
         shell: bash -l {0}
         run: |
-          pre-commit --run all
+          pre-commit run --all
           pytest -vv webservices_dispatch_action
           command -v run-webservices-dispatch-action
 
