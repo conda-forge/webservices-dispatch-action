@@ -14,5 +14,5 @@ packages = ["webservices_dispatch_action"]
 run-webservices-dispatch-action = "webservices_dispatch_action.__main__:main"
 run-webservices-dispatch-action-version-updater = "webservices_dispatch_action.version_updater:main"
 
-[tool.flake8]
-max-line-length = 88
+[tool.ruff]
+line-length = 88

@@ -33,13 +33,13 @@ jobs:
         shell: bash -l {0}
         run: |
           conda info -a
-          mamba install --yes pytest flake8
+          mamba install --yes pytest pre-commit
           pip install --no-deps -e .
 
       - name: lint and run tests
         shell: bash -l {0}
         run: |
-          flake8 webservices_dispatch_action
+          pre-commit --run all
           pytest -vv webservices_dispatch_action
           command -v run-webservices-dispatch-action
 
