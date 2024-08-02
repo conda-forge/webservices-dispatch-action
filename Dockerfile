@@ -5,7 +5,7 @@ USER root
 COPY . /app
 WORKDIR /app
 
-RUN pixi run install
+RUN pixi install
 
 # Create the shell-hook bash script to activate the environment
 RUN pixi shell-hook -e default > /shell-hook.sh
