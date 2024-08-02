@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "webservices_dispatch_action"
+version = "0.1"
+dynamic = ["dependencies"]
+
+[tool.setuptools]
+packages = ["webservices_dispatch_action"]
+
+[project.scripts]
+run-webservices-dispatch-action = "webservices_dispatch_action.__main__:main"
+run-webservices-dispatch-action-version-updater = "webservices_dispatch_action.version_updater:main"
+
+[tool.flake8]
+max-line-length = 88
