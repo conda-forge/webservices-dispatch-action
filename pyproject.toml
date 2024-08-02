@@ -14,5 +14,9 @@ packages = ["webservices_dispatch_action"]
 run-webservices-dispatch-action = "webservices_dispatch_action.__main__:main"
 run-webservices-dispatch-action-version-updater = "webservices_dispatch_action.version_updater:main"
 
-[tool.ruff]
-line-length = 88
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+preview = true
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 88
