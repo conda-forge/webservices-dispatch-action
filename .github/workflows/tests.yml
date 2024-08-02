@@ -36,7 +36,7 @@ jobs:
           mamba install --yes pytest
           pip install --no-deps -e .
 
-      - name: lint and run tests
+      - name: run tests
         shell: bash -l {0}
         run: |
           pytest -vv webservices_dispatch_action
