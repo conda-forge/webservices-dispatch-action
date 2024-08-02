@@ -3,6 +3,7 @@ USER root
 
 # make sure the install below is not cached by docker
 COPY . /app
+WORKDIR /app
 
 RUN pixi run install
 
