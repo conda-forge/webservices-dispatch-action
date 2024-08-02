@@ -1,21 +1,21 @@
-import os
 import json
 import logging
+import os
 import pprint
-import tempfile
 import subprocess
+import tempfile
 
 from git import Repo
 
 import webservices_dispatch_action
 from webservices_dispatch_action.api_sessions import (
-    create_api_sessions, get_actor_token
+    create_api_sessions,
+    get_actor_token,
 )
 from webservices_dispatch_action.rerendering import (
     rerender,
 )
 from webservices_dispatch_action.utils import comment_and_push_if_changed
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -23,27 +23,27 @@ LOGGER = logging.getLogger(__name__)
 def main():
     logging.basicConfig(level=logging.INFO)
 
-    LOGGER.info('making API clients')
+    LOGGER.info("making API clients")
 
     with webservices_dispatch_action.sensitive_env():
         _, gh = create_api_sessions(os.environ["INPUT_GITHUB_TOKEN"])
 
-    with open(os.environ["GITHUB_EVENT_PATH"], 'r') as fp:
+    with open(os.environ["GITHUB_EVENT_PATH"], "r") as fp:
         event_data = json.load(fp)
-    event_name = os.environ['GITHUB_EVENT_NAME'].lower()
+    event_name = os.environ["GITHUB_EVENT_NAME"].lower()
 
-    LOGGER.info('github event: %s', event_name)
-    LOGGER.info('github event data:\n%s\n', pprint.pformat(event_data))
+    LOGGER.info("github event: %s", event_name)
+    LOGGER.info("github event data:\n%s\n", pprint.pformat(event_data))
 
-    if event_name in ['repository_dispatch']:
-        if event_data['action'] == 'rerender':
-            pr_num = int(event_data['client_payload']['pr'])
-            repo_name = event_data['repository']['full_name']
+    if event_name in ["repository_dispatch"]:
+        if event_data["action"] == "rerender":
+            pr_num = int(event_data["client_payload"]["pr"])
+            repo_name = event_data["repository"]["full_name"]
 
             gh_repo = gh.get_repo(repo_name)
             pr = gh_repo.get_pull(pr_num)
 
-            if pr.state == 'closed':
+            if pr.state == "closed":
                 raise ValueError("Closed PRs cannot be rerendered!")
 
             with tempfile.TemporaryDirectory() as tmpdir:
@@ -73,7 +73,7 @@ def main():
 
                 # comment
                 push_error = comment_and_push_if_changed(
-                    action='rerender',
+                    action="rerender",
                     changed=changed,
                     error=rerender_error,
                     git_repo=git_repo,
@@ -83,7 +83,8 @@ def main():
                     pr_repo=pr_repo,
                     repo_name=repo_name,
                     close_pr_if_no_changes_or_errors=False,
-                    help_message=" or you can try [rerendeing locally](%s)" % (
+                    help_message=" or you can try [rerendeing locally](%s)"
+                    % (
                         "https://conda-forge.org/docs/maintainer/updating_pkgs.html"
                         "#rerendering-with-conda-smithy-locally"
                     ),
@@ -92,20 +93,21 @@ def main():
 
                 if rerender_error or push_error:
                     raise RuntimeError(
-                        "Rerendering failed! error in push|rerender: %s|%s" % (
+                        "Rerendering failed! error in push|rerender: %s|%s"
+                        % (
                             push_error,
                             rerender_error,
                         ),
                     )
-        elif event_data['action'] == 'version_update':
-            pr_num = int(event_data['client_payload']['pr'])
-            repo_name = event_data['repository']['full_name']
+        elif event_data["action"] == "version_update":
+            pr_num = int(event_data["client_payload"]["pr"])
+            repo_name = event_data["repository"]["full_name"]
             input_version = event_data["client_payload"].get("input_version", None)
 
             gh_repo = gh.get_repo(repo_name)
             pr = gh_repo.get_pull(pr_num)
 
-            if pr.state == 'closed':
+            if pr.state == "closed":
                 raise ValueError("Closed PRs cannot have their version updated!")
 
             with tempfile.TemporaryDirectory() as tmpdir:
@@ -155,7 +157,7 @@ def main():
                     version_changed = True
 
                 version_push_error = comment_and_push_if_changed(
-                    action='update the version',
+                    action="update the version",
                     changed=version_changed,
                     error=version_error,
                     git_repo=git_repo,
@@ -172,7 +174,8 @@ def main():
                 if version_error or version_push_error:
                     raise RuntimeError(
                         "Updating version failed! error in "
-                        "push|version update: %s|%s" % (
+                        "push|version update: %s|%s"
+                        % (
                             version_push_error,
                             version_error,
                         ),
@@ -184,7 +187,7 @@ def main():
                         git_repo, can_change_workflows
                     )
                     rerender_push_error = comment_and_push_if_changed(
-                        action='rerender',
+                        action="rerender",
                         changed=rerender_changed,
                         error=rerender_error,
                         git_repo=git_repo,
@@ -194,7 +197,8 @@ def main():
                         pr_repo=pr_repo,
                         repo_name=repo_name,
                         close_pr_if_no_changes_or_errors=False,
-                        help_message=" or you can try [rerendeing locally](%s)" % (
+                        help_message=" or you can try [rerendeing locally](%s)"
+                        % (
                             "https://conda-forge.org/docs/maintainer/updating_pkgs.html"
                             "#rerendering-with-conda-smithy-locally"
                         ),
@@ -203,13 +207,15 @@ def main():
 
                     if rerender_error or rerender_push_error:
                         raise RuntimeError(
-                            "Rerendering failed! error in push|rerender: %s|%s" % (
+                            "Rerendering failed! error in push|rerender: %s|%s"
+                            % (
                                 push_error,
                                 rerender_error,
                             ),
                         )
         else:
             raise ValueError(
-                'Dispatch action %s cannot be processed!' % event_data['action'])
+                "Dispatch action %s cannot be processed!" % event_data["action"]
+            )
     else:
-        raise ValueError('GitHub event %s cannot be processed!' % event_name)
+        raise ValueError("GitHub event %s cannot be processed!" % event_name)
