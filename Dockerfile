@@ -5,6 +5,8 @@ USER root
 COPY . /app
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y git
+
 RUN pixi install
 
 # Create the shell-hook bash script to activate the environment
