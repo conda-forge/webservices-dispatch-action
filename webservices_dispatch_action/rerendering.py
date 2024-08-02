@@ -8,7 +8,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def rerender(git_repo, can_change_workflows):
-    LOGGER.info('rerendering')
+    LOGGER.info("rerendering")
 
     info_message = None
 
@@ -37,10 +37,12 @@ def rerender(git_repo, can_change_workflows):
                 [
                     ".github/workflows" in line
                     for line in out.stdout.decode().splitlines()
-                ] + [
+                ]
+                + [
                     ".github/workflows" in line
                     for line in out.stderr.decode().splitlines()
-                ])
+                ]
+            )
 
             if changed_workflows:
                 info_message = (
@@ -55,12 +57,12 @@ def rerender(git_repo, can_change_workflows):
                 )
 
             subprocess.call(
-               ["git", "checkout", "HEAD~1", "--", ".github/workflows/*"],
-               cwd=git_repo.working_dir,
+                ["git", "checkout", "HEAD~1", "--", ".github/workflows/*"],
+                cwd=git_repo.working_dir,
             )
             subprocess.call(
-               ["git", "commit", "--amend", "--allow-empty", "--no-edit"],
-               cwd=git_repo.working_dir,
+                ["git", "commit", "--amend", "--allow-empty", "--no-edit"],
+                cwd=git_repo.working_dir,
             )
         changed, rerender_error = True, False
 

@@ -50,4 +50,3 @@ RUN source /opt/conda/etc/profile.d/conda.sh && \
     pip install --no-build-isolation -e .
 
 ENTRYPOINT ["/opt/conda/bin/tini", "--", "/opt/docker/bin/entrypoint"]
-

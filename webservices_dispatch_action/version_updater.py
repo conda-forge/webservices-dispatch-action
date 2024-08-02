@@ -80,12 +80,9 @@ def update_version(git_repo, repo_name, input_version=None):
         )
 
     # if we are finding the version automatically, check that it is going up
-    if (
-        (input_version is None or input_version == "null")
-        and (
-            VersionOrder(str(new_version).replace("-", "."))
-            <= VersionOrder(str(attrs.get("version", "0.0.0")).replace("-", "."))
-        )
+    if (input_version is None or input_version == "null") and (
+        VersionOrder(str(new_version).replace("-", "."))
+        <= VersionOrder(str(attrs.get("version", "0.0.0")).replace("-", "."))
     ):
         LOGGER.info(
             "not updating since new version is less or equal to current version"
@@ -162,7 +159,9 @@ def main(
     git_repo = Repo(feedstock_dir)
 
     _, version_error = update_version(
-        git_repo, repo_name, input_version=input_version,
+        git_repo,
+        repo_name,
+        input_version=input_version,
     )
 
     if version_error:
