@@ -26,6 +26,7 @@ Then you can execute this script and it will report the results.
  - Then we trigger the rerender and check that it happened.
 
 """
+
 import os
 import json
 import time
@@ -51,6 +52,7 @@ def pushd(new_dir):
 
 def _change_version(new_version="0.13", branch="main"):
     import random
+
     new_sha = "".join(random.choices("0123456789abcdef", k=64))
 
     print("changing the version to an old one...", flush=True)
@@ -59,7 +61,7 @@ def _change_version(new_version="0.13", branch="main"):
     new_lines = []
     with open("recipe/meta.yaml", "r") as fp:
         for line in fp.readlines():
-            if line.startswith('{% set version ='):
+            if line.startswith("{% set version ="):
                 new_lines.append('{%% set version = "%s" %%}\n' % new_version)
             elif line.startswith("  sha256: "):
                 new_lines.append("  sha256: %s\n" % new_sha)
@@ -71,11 +73,9 @@ def _change_version(new_version="0.13", branch="main"):
     print("staging file..", flush=True)
     subprocess.run("git add recipe/meta.yaml", shell=True, check=True)
     subprocess.run(
-        "git commit "
-        "--allow-empty "
-        "-m "
-        "'[ci skip] moved version to older 0.13'",
-        shell=True, check=True
+        "git commit " "--allow-empty " "-m " "'[ci skip] moved version to older 0.13'",
+        shell=True,
+        check=True,
     )
 
     print("push to origin...", flush=True)
@@ -90,24 +90,27 @@ def _merge_main_to_branch():
     subprocess.run("git pull", shell=True, check=True)
     subprocess.run(
         "git merge --no-edit --strategy-option theirs main",
-        shell=True, check=True,
+        shell=True,
+        check=True,
     )
     subprocess.run("git push", shell=True, check=True)
 
 
 def _run_test(version):
     print(
-        'sending repo dispatch event to update '
-        'the version w/ version=%r...' % version,
+        "sending repo dispatch event to update "
+        "the version w/ version=%r..." % version,
         flush=True,
     )
     headers = {
-        "authorization": "Bearer %s" % os.environ['GH_TOKEN'],
-        'content-type': 'application/json',
+        "authorization": "Bearer %s" % os.environ["GH_TOKEN"],
+        "content-type": "application/json",
     }
     r = requests.post(
-        ("https://api.github.com/repos/conda-forge/"
-         "cf-autotick-bot-test-package-feedstock/dispatches"),
+        (
+            "https://api.github.com/repos/conda-forge/"
+            "cf-autotick-bot-test-package-feedstock/dispatches"
+        ),
         data=json.dumps(
             {
                 "event_type": "version_update",
@@ -116,17 +119,17 @@ def _run_test(version):
         ),
         headers=headers,
     )
-    print('    dispatch event status code:', r.status_code, flush=True)
+    print("    dispatch event status code:", r.status_code, flush=True)
     assert r.status_code == 204
 
-    print('sleeping for a few minutes to let the version update happen...', flush=True)
+    print("sleeping for a few minutes to let the version update happen...", flush=True)
     tot = 0
     while tot < 180:
         time.sleep(10)
         tot += 10
         print("    slept %s seconds out of 180" % tot, flush=True)
 
-    print('checking repo for the version update...', flush=True)
+    print("checking repo for the version update...", flush=True)
     with tempfile.TemporaryDirectory() as tmpdir:
         with pushd(tmpdir):
             print("cloning...", flush=True)
@@ -152,11 +155,11 @@ def _run_test(version):
                     capture_output=True,
                     check=True,
                 )
-                output = c.stdout.decode('utf-8')
+                output = c.stdout.decode("utf-8")
                 print("    last commit:", output.strip(), flush=True)
                 assert "MNT:" in output or "ENH " in output
 
-    print('tests passed!', flush=True)
+    print("tests passed!", flush=True)
 
 
 def _change_action_branch(branch):
@@ -169,7 +172,8 @@ def _change_action_branch(branch):
     )
 
     with open(".github/workflows/webservices.yml", "w") as fp:
-        fp.write("""\
+        fp.write(
+            """\
 on: repository_dispatch
 
 jobs:
@@ -183,16 +187,19 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           %s
-""" % data)
+"""
+            % data
+        )
 
-    print("commiting...", flush=True)
+    print("committing...", flush=True)
     subprocess.run("git add .github/workflows/webservices.yml", shell=True, check=True)
     subprocess.run(
         "git commit "
         "--allow-empty "
         "-m "
         "'[ci skip] move rerender action to branch %s'" % branch,
-        shell=True, check=True
+        shell=True,
+        check=True,
     )
 
     print("push to origin...", flush=True)
@@ -207,7 +214,7 @@ parser.add_argument(
     help="build and push the docker image to the dev tag before running the tests",
     action="store_true",
 )
-parser.add_argument('--version', type=str, help="if given, update to this version")
+parser.add_argument("--version", type=str, help="if given, update to this version")
 args = parser.parse_args()
 
 if args.build_and_push:
@@ -223,7 +230,7 @@ if args.build_and_push:
     )
 
 
-print('making an edit to the head ref...', flush=True)
+print("making an edit to the head ref...", flush=True)
 with tempfile.TemporaryDirectory() as tmpdir:
     with pushd(tmpdir):
         print("cloning...", flush=True)

@@ -5,10 +5,10 @@ setup(
     version="0.1",
     packages=find_packages(),
     entry_points={
-        'console_scripts': [
-            'run-webservices-dispatch-action=webservices_dispatch_action.__main__:main',
-            'run-webservices-dispatch-action-version-updater'
-            '=webservices_dispatch_action.version_updater:main',
+        "console_scripts": [
+            "run-webservices-dispatch-action=webservices_dispatch_action.__main__:main",
+            "run-webservices-dispatch-action-version-updater"
+            "=webservices_dispatch_action.version_updater:main",
         ],
     },
 )

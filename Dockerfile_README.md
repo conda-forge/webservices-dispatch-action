@@ -4,7 +4,7 @@ a docker image to run conda-forge's admin webservices GitHub Actions integration
 
 ## Description
 
-This image contains the code and integrations to run conda-forge's webservices GitHub Actions 
+This image contains the code and integrations to run conda-forge's webservices GitHub Actions
 integrations. Those integrations perform basic tasks like rerendering feedstocks and updating
 to new versions.
 
@@ -16,14 +16,14 @@ license.
 
 ## Documentation & Contributing
 
-You can find documentation for how to use the image on the 
+You can find documentation for how to use the image on the
 upstream [repo](https://github.com/conda-forge/webservices-dispatch-action) and in the sections below.
 
 To get in touch with the maintainers of this image, please [make an issue](https://github.com/conda-forge/webservices-dispatch-action/issues/new/choose)
-and bump the `@conda-forge/core` team. 
+and bump the `@conda-forge/core` team.
 
-Contributions are welcome in accordance 
-with conda-forge's [code of conduct](https://conda-forge.org/community/code-of-conduct/). We accept them through pull requests on the 
+Contributions are welcome in accordance
+with conda-forge's [code of conduct](https://conda-forge.org/community/code-of-conduct/). We accept them through pull requests on the
 upstream [repo](https://github.com/conda-forge/webservices-dispatch-action/compare).
 
 ## Important Image Tags
@@ -59,5 +59,5 @@ For example, a rerender uses:
 {"event_type": "rerender", "client_payload": {"pr": 12}}
 ```
 
-The form of the JSON blobs for various actions can be found in 
+The form of the JSON blobs for various actions can be found in
 the [package entrypoint](https://github.com/conda-forge/webservices-dispatch-action/blob/main/webservices_dispatch_action/__main__.py).

@@ -15,17 +15,27 @@ def get_gha_run_link(repo_name):
 
 def comment_and_push_if_changed(
     *,
-    action, changed, error, git_repo, pull, pr_branch, pr_owner, pr_repo,
-    repo_name, close_pr_if_no_changes_or_errors,
-    help_message, info_message,
+    action,
+    changed,
+    error,
+    git_repo,
+    pull,
+    pr_branch,
+    pr_owner,
+    pr_repo,
+    repo_name,
+    close_pr_if_no_changes_or_errors,
+    help_message,
+    info_message,
 ):
     actor, token, can_change_workflows = get_actor_token()
     LOGGER.info(
-        'token can change workflows: %s', can_change_workflows,
+        "token can change workflows: %s",
+        can_change_workflows,
     )
 
     LOGGER.info(
-        'pushing and commenting: branch|owner|repo = %s|%s|%s',
+        "pushing and commenting: branch|owner|repo = %s|%s|%s",
         pr_branch,
         pr_owner,
         pr_repo,
@@ -38,7 +48,8 @@ def comment_and_push_if_changed(
     if changed:
         try:
             git_repo.remotes.origin.set_url(
-                "https://%s:%s@github.com/%s/%s.git" % (
+                "https://%s:%s@github.com/%s/%s.git"
+                % (
                     actor,
                     token,
                     pr_owner,
@@ -65,7 +76,8 @@ into your personal GitHub account.
 """.format(action, pr_branch, pr_owner, pr_repo)
         finally:
             git_repo.remotes.origin.set_url(
-                "https://github.com/%s/%s.git" % (
+                "https://github.com/%s/%s.git"
+                % (
                     pr_owner,
                     pr_repo,
                 ),
@@ -88,9 +100,7 @@ Hi! This is the friendly automated conda-forge-webservice.
 I tried to {} for you, but it looks like there was nothing to do.
 """.format(action)
             if close_pr_if_no_changes_or_errors:
-                message += (
-                    "\nI'm closing this PR!"
-                )
+                message += "\nI'm closing this PR!"
 
     if info_message:
         if message is None:
@@ -100,9 +110,7 @@ Hi! This is the friendly automated conda-forge-webservice.
 {}
 """.format(info_message)
         else:
-            message += (
-                "\n" + info_message
-            )
+            message += "\n" + info_message
 
     if message is not None:
         if run_link is not None:

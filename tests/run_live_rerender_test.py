@@ -26,6 +26,7 @@ Then you can execute this script and it will report the results.
  - Then we trigger the rerender and check that it happened.
 
 """
+
 import os
 import json
 import time
@@ -48,28 +49,30 @@ def pushd(new_dir):
 
 
 def _run_test():
-    print('sending repo dispatch event to rerender...')
+    print("sending repo dispatch event to rerender...")
     headers = {
-        "authorization": "Bearer %s" % os.environ['GH_TOKEN'],
-        'content-type': 'application/json',
+        "authorization": "Bearer %s" % os.environ["GH_TOKEN"],
+        "content-type": "application/json",
     }
     r = requests.post(
-        ("https://api.github.com/repos/conda-forge/"
-         "cf-autotick-bot-test-package-feedstock/dispatches"),
+        (
+            "https://api.github.com/repos/conda-forge/"
+            "cf-autotick-bot-test-package-feedstock/dispatches"
+        ),
         data=json.dumps({"event_type": "rerender", "client_payload": {"pr": 445}}),
         headers=headers,
     )
-    print('    dispatch event status code:', r.status_code)
+    print("    dispatch event status code:", r.status_code)
     assert r.status_code == 204
 
-    print('sleeping for a few minutes to let the rerender happen...')
+    print("sleeping for a few minutes to let the rerender happen...")
     tot = 0
     while tot < 180:
         time.sleep(10)
         tot += 10
         print("    slept %s seconds out of 180" % tot, flush=True)
 
-    print('checking repo for the rerender...')
+    print("checking repo for the rerender...")
     with tempfile.TemporaryDirectory() as tmpdir:
         with pushd(tmpdir):
             print("cloning...")
@@ -95,11 +98,11 @@ def _run_test():
                     capture_output=True,
                     check=True,
                 )
-                output = c.stdout.decode('utf-8')
+                output = c.stdout.decode("utf-8")
                 print("    last commit:", output.strip())
                 assert "MNT:" in output
 
-    print('tests passed!')
+    print("tests passed!")
 
 
 def _merge_main_to_branch():
@@ -110,7 +113,8 @@ def _merge_main_to_branch():
     subprocess.run("git pull", shell=True, check=True)
     subprocess.run(
         "git merge --no-edit --strategy-option theirs main",
-        shell=True, check=True,
+        shell=True,
+        check=True,
     )
     subprocess.run("git push", shell=True, check=True)
 
@@ -125,7 +129,8 @@ def _change_action_branch(branch):
     )
 
     with open(".github/workflows/webservices.yml", "w") as fp:
-        fp.write("""\
+        fp.write(
+            """\
 on: repository_dispatch
 
 jobs:
@@ -139,9 +144,11 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           %s
-""" % data)
+"""
+            % data
+        )
 
-    print("commiting...", flush=True)
+    print("committing...", flush=True)
     subprocess.run(
         "git add -f .github/workflows/webservices.yml", shell=True, check=True
     )
@@ -150,7 +157,8 @@ jobs:
         "--allow-empty "
         "-m "
         "'[ci skip] move rerender action to branch %s'" % branch,
-        shell=True, check=True
+        shell=True,
+        check=True,
     )
 
     print("push to origin...", flush=True)
@@ -181,7 +189,7 @@ if args.build_and_push:
     )
 
 
-print('making an edit to the head ref...')
+print("making an edit to the head ref...")
 with tempfile.TemporaryDirectory() as tmpdir:
     with pushd(tmpdir):
         print("cloning...")
@@ -223,12 +231,13 @@ with tempfile.TemporaryDirectory() as tmpdir:
                     print("git status...")
                     subprocess.run("git status", shell=True, check=True)
 
-                    print("commiting...")
+                    print("committing...")
                     subprocess.run(
                         "git commit "
                         "-m "
                         "'[ci skip] remove ci scripts to trigger rerender'",
-                        shell=True, check=True
+                        shell=True,
+                        check=True,
                     )
 
                     print("push to origin...")
@@ -268,13 +277,14 @@ with tempfile.TemporaryDirectory() as tmpdir:
                     shell=True,
                 )
 
-                print("commiting...")
+                print("committing...")
                 subprocess.run(
                     "git commit "
                     "--allow-empty "
                     "-m "
                     "'[ci skip] undo workflow changes'",
-                    shell=True, check=True
+                    shell=True,
+                    check=True,
                 )
 
                 print("push to origin...")
