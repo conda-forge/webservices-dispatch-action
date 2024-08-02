@@ -36,4 +36,3 @@ RUN mkdir -p webservices_dispatch_action
 # no more pixi needed in the prod container
 ENTRYPOINT ["/bin/bash", "/shell-hook.sh"]
 CMD ["tini -- /opt/docker/bin/entrypoint"]
-

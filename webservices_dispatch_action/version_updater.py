@@ -1,28 +1,26 @@
-import os
 import logging
+import os
 import pprint
 import subprocess
-import click
 import sys
 
-from git import Repo
+import click
+import conda_forge_tick.update_recipe
 from conda.models.version import VersionOrder
-
-from conda_forge_tick.utils import setup_logging
 from conda_forge_tick.feedstock_parser import load_feedstock
-from conda_forge_tick.update_upstream_versions import get_latest_version
-
 from conda_forge_tick.update_sources import (
-    PyPI,
     CRAN,
     NPM,
-    ROSDistro,
-    RawURL,
+    NVIDIA,
     Github,
     IncrementAlphaRawURL,
-    NVIDIA,
+    PyPI,
+    RawURL,
+    ROSDistro,
 )
-import conda_forge_tick.update_recipe
+from conda_forge_tick.update_upstream_versions import get_latest_version
+from conda_forge_tick.utils import setup_logging
+from git import Repo
 
 setup_logging()
 
@@ -80,12 +78,9 @@ def update_version(git_repo, repo_name, input_version=None):
         )
 
     # if we are finding the version automatically, check that it is going up
-    if (
-        (input_version is None or input_version == "null")
-        and (
-            VersionOrder(str(new_version).replace("-", "."))
-            <= VersionOrder(str(attrs.get("version", "0.0.0")).replace("-", "."))
-        )
+    if (input_version is None or input_version == "null") and (
+        VersionOrder(str(new_version).replace("-", "."))
+        <= VersionOrder(str(attrs.get("version", "0.0.0")).replace("-", "."))
     ):
         LOGGER.info(
             "not updating since new version is less or equal to current version"
@@ -162,7 +157,9 @@ def main(
     git_repo = Repo(feedstock_dir)
 
     _, version_error = update_version(
-        git_repo, repo_name, input_version=input_version,
+        git_repo,
+        repo_name,
+        input_version=input_version,
     )
 
     if version_error:
