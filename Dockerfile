@@ -12,8 +12,6 @@ RUN echo "**** install base env ****" && \
     micromamba install --yes --quiet --name base -c conda-forge git conda python=3.11 && \
     source /opt/conda/etc/profile.d/conda.sh && \
     conda activate base && \
-    git clone https://github.com/regro/cf-scripts.git && \
-    micromamba install --yes --quiet --name base --file cf-scripts/environment.yml && \
     micromamba install --yes --quiet --name base --file /tmp/environment.yml
 
 RUN echo "**** cleanup ****" && \
@@ -44,9 +42,6 @@ COPY / webservices_dispatch_action/
 RUN source /opt/conda/etc/profile.d/conda.sh && \
     cd webservices_dispatch_action && \
     conda activate base && \
-    pip install --no-build-isolation -e . && \
-    git clone https://github.com/regro/cf-scripts.git && \
-    cd cf-scripts && \
     pip install --no-build-isolation -e .
 
 ENTRYPOINT ["/opt/conda/bin/tini", "--", "/opt/docker/bin/entrypoint"]

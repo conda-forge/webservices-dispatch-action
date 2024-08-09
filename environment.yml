@@ -4,6 +4,7 @@ channels:
 dependencies:
  - git
  - conda-smithy>=3.22.0
+ - conda-forge-tick
  - conda-forge-pinning
  - conda-build
  - pip
